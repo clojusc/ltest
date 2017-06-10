@@ -5,4 +5,5 @@
     :name "Apache License, Version 2.0"
     :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [
+    [clansi "1.0.0" :exclusions [org.clojure/clojure]]
     [org.clojure/clojure "1.8.0"]])
