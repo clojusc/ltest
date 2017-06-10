@@ -1,6 +1,6 @@
 # ltest
 
-A Clojure library designed to ... well, that part is up to you.
+*A custom test runner for clojure.test with detailed, coloured output and summaries*
 
 ## Usage
 
@@ -8,7 +8,6 @@ FIXME
 
 ## License
 
-Copyright © 2017 FIXME
+Copyright © 2017, Clojure-Aided Enrichment Center
 
-Distributed under the Eclipse Public License either version 1.0 or (at
-your option) any later version.
+Distributed under the Apache License, Version 2.0.
