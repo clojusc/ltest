@@ -6,4 +6,14 @@
     :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [
     [clansi "1.0.0" :exclusions [org.clojure/clojure]]
-    [org.clojure/clojure "1.8.0"]])
+    [org.clojure/clojure "1.8.0"]
+    [potemkin "0.4.3"]]
+  :profiles {
+    :dev {
+      :dependencies [
+        [org.clojure/tools.namespace "0.2.11"]]
+      :source-paths [
+        "dev-resources/src"
+        "resources/sample-tests/src"]
+      :repl-options {
+        :init-ns ltest.dev}}})
