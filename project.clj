@@ -1,4 +1,4 @@
-(defproject ltest "0.1.0-SNAPSHOT"
+(defproject clojusc/ltest "0.1.0-SNAPSHOT"
   :description "A custom test runner for clojure.test with detailed, coloured output and summaries"
   :url "https://github.com/clojusc/ltest"
   :license {
