@@ -79,11 +79,14 @@
 (defn process-group
   [[group-name nss] action-fn format-fn options]
   (format-fn group-name)
-  (doall (map (fn [x]
-                (get-ns x)
-                (action-fn x))
-              nss))
-  (println (styles/style (:style options) :subdivider subdivider)))
+  (let [results (->> nss
+                     (map (fn [x]
+                              (get-ns x)
+                              (action-fn x)))
+                     (reduce conj []))]
+    (println \newline
+             (styles/style (:style options) :subdivider subdivider))
+    results))
 
 (defn do-grouped-nss
   "Given a list of namespaces, group them and run the given function against
@@ -93,6 +96,11 @@
   ([nss action-fn format-fn]
     (do-grouped-nss nss action-fn format-fn default-grouper))
   ([nss action-fn format-fn grouper-fn options]
-    (map
-      #(process-group % action-fn format-fn options)
-      (grouper-fn nss))))
+    (->> nss
+         (grouper-fn)
+         (map #(process-group % action-fn format-fn options))
+         (reduce conj []))))
+
+(defn extract-suite
+  [suite]
+  [(:name suite) (:nss suite) (:runner suite)])
