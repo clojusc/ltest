@@ -37,7 +37,7 @@
 (defn color-status
   "Color the test status according to the configured style."
   [status]
-  (case (string/trim status)
+  (condp = status
     const/pass (styles/style *style* :pass status)
     const/fail (styles/style *style* :fail status)
     const/error (styles/style *style* :error status)))
@@ -47,10 +47,6 @@
   ([line postfix status]
     (make-line line postfix const/min-elide status))
   ([line postfix elide-count status]
-    (println (format "Got line: '%s'" line))
-    (println (format "Got postfix: '%s'" postfix))
-    (println (format "Got elide-count: '%s'" elide-count))
-    (println (format "Got status: '%s'" status))
     (format "%s%s %s [%s]"
             line
             (ansi/style postfix :blue)
@@ -66,7 +62,7 @@
   ([prefix idx status]
    (line-format prefix idx "" status))
   ([prefix idx postfix status]
-   (let [line (format "%s assertion %s " prefix idx)
+   (let [line (format "%s assertion %s" prefix idx)
          len (+ (count line)
                 (count postfix)
                 const/elide-space
@@ -76,7 +72,7 @@
        (make-line line postfix (- const/max-len len) status)
        (make-line line postfix status))))
   ([prefix idx file line status]
-   (line-format prefix idx (format " (%s:%s) " file line) status)))
+   (line-format prefix idx (format " (%s:%s)" file line) status)))
 
 (defn test-ns
   "Extract the test's namespace."
@@ -108,7 +104,7 @@
     (swap! *passed* inc)
     (swap! *assertion-count* inc)
     (println
-      (line-format const/assertion-prefix
+      (line-format const/assertion-indent
                    @*assertion-count*
                    const/pass))))
 
@@ -123,7 +119,7 @@
     (test/inc-report-counter :fail)
     (swap! *assertion-count* inc)
     (println
-      (line-format const/assertion-prefix
+      (line-format const/assertion-indent
                    @*assertion-count*
                    (:file m)
                    (:line m)
@@ -140,7 +136,7 @@
     (test/inc-report-counter :error)
     (swap! *assertion-count* inc)
     (println
-      (line-format const/assertion-prefix
+      (line-format const/assertion-indent
                    @*assertion-count*
                    (:file m)
                    (:line m)
@@ -149,7 +145,7 @@
 (defmethod test/report :begin-test-ns
   [m]
   (test/with-test-out
-    (println const/ns-prefix
+    (println const/ns-indent
              (styles/style *style*
                            :ns
                            (test-ns m)))))
@@ -161,7 +157,7 @@
   [m]
   (swap! *tests* inc)
   (test/with-test-out
-    (println const/test-prefix
+    (println const/test-indent
              (styles/style *style*
                            :test
                            (test-name m)))))

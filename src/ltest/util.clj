@@ -61,6 +61,10 @@
   [an-ns]
   (ns->app (str an-ns)))
 
+(defmethod ns->app clojure.lang.Keyword
+  [an-ns]
+  (ns->app (name an-ns)))
+
 (defmethod ns->app java.lang.String
   [an-ns]
   (->> (string/split an-ns #"\.")
@@ -68,14 +72,17 @@
        (string/join ".")))
 
 (defn default-grouper
-  "Give a list of namespaces, group them by sorted application."
+  "Given a list of namespaces, group them by sorted application."
   [nss]
   (sort (group-by ns->app nss)))
 
 (defn process-group
   [[group-name nss] action-fn format-fn options]
   (format-fn group-name)
-  (doall (map action-fn nss))
+  (doall (map (fn [x]
+                (get-ns x)
+                (action-fn x))
+              nss))
   (println (styles/style (:style options) :subdivider subdivider)))
 
 (defn do-grouped-nss

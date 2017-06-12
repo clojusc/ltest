@@ -1,8 +1,8 @@
 (ns ltest.constants)
 
-(def ns-prefix (apply str (repeat 2 " ")))
-(def test-prefix (apply str (repeat 4 " ")))
-(def assertion-prefix (apply str (repeat 6 " ")))
+(def ns-indent (apply str (repeat 2 " ")))
+(def test-indent (apply str (repeat 4 " ")))
+(def assertion-indent (apply str (repeat 6 " ")))
 
 (def max-len 80)
 (def min-elide 3)
