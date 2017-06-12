@@ -166,6 +166,12 @@
   [m]
   (reset! *assertion-count* 0))
 
+(defmethod test/report :summary [m]
+  (test/with-test-out
+   (println "\nRan" (:test m) "tests containing"
+            (+ (:pass m) (:fail m) (:error m)) "assertions.")
+   (println (:fail m) "failures," (:error m) "errors.")))
+
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Test runner implementation/overrides   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -180,7 +186,6 @@
     (let [namespaces (map util/get-ns nss)
           summary (assoc (apply merge-with + (map test/test-ns namespaces))
                     :type :summary)]
-      (test/do-report summary)
       (-> summary
           (assoc :errors @*errors*
                  :failures @*failures*)
@@ -194,7 +199,95 @@
   (test/test-vars [ns-test-var])
   (let [result {:tests @*tests*
                 :pass @*passed*
-                :failed @*failures*
-                :erred @*errors*}]
+                :failures @*failures*
+                :errors @*errors*}]
     (reset-counters!)
     result))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Custom summary reporter   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn show-summary
+  [results]
+  (println)
+  (println util/divider)
+  (println "Results")
+  (println util/divider)
+  (println "Total tests:" (reduce + 0 (map :test results)))
+  (println "Assertion passes:" (reduce + 0 (map :pass results)))
+  (println "Assertion failures:" (reduce + 0 (map :fail results)))
+  (println "Assertion errors:" (reduce + 0 (map :error results)))
+  (println)
+  results)
+
+(defn show-failure
+  [result]
+  (println (format "Test: %s/%s"
+                   (styles/style *style* :ns (:ns result))
+                   (styles/style *style* :test (:test result))))
+  (println "File:" (:file result))
+  (println "Line number:" (:line result))
+  (println (format "%s: %s"
+                   (styles/style *style* :pass "Expected")
+                   (:expected result)))
+  (println (format "%s: %s"
+                   (styles/style *style* :fail "Actual")
+                    (:actual result)))
+  (println util/subdivider))
+
+(defn show-failure-set
+  [result]
+  (dorun
+    (map show-failure result)))
+
+(defn show-error
+  [result]
+  (println (format "Test: %s/%s"
+                   (styles/style *style* :ns (:ns result))
+                   (styles/style *style* :test (:test result))))
+  (println "File:" (:file result))
+  (println "Line number:" (:line result))
+  (println (format "%s: %s"
+                   (styles/style *style* :error-header "Message")
+                   (:message result)))
+  (println (format "%s: %s"
+                   (styles/style *style* :error-header "Error")
+                   (:actual result)))
+  (println (:actual result))
+  (println util/subdivider))
+
+(defn show-error-set
+  [result]
+  (dorun
+    (map show-error result)))
+
+(defn show-failures
+  [results]
+  (when (pos? (reduce + 0 (map :fail results)))
+    (println (styles/style *style* :fail-divider util/divider))
+    (println (styles/style *style* :fail-header "Failures"))
+    (println (styles/style *style* :fail-divider util/divider))
+    (println)
+    (dorun
+      (->> results
+           (map :failures)
+           (remove empty?)
+           (map show-failure-set)))
+    (println))
+  results)
+
+(defn show-errors
+  [results]
+  (when (pos? (reduce + 0 (map :error results)))
+    (println (styles/style *style* :error-divider util/divider))
+    (println (styles/style *style* :error-header "Errors"))
+    (println (styles/style *style* :error-divider util/divider))
+    (println)
+    (dorun
+      (->> results
+           (map :errors)
+           (remove empty?)
+           (map show-error-set)))
+    (println))
+  results)
