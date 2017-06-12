@@ -21,7 +21,11 @@
    :divider #(ansi/style % :blue)
    :subdivider #(ansi/style % :blue)
    :ns #(ansi/style % :yellow :bright)
-   :test #(ansi/style % :yellow)})
+   :test #(ansi/style % :yellow)
+   :fail-header #(ansi/style % :red :bright)
+   :fail-divider #(ansi/style % :red )
+   :error-header #(ansi/style % :magenta :bright)
+   :error-divider #(ansi/style % :magenta)})
 
 ;;; XXX Add more styles for different terminal types (e.g., light background).
 ;;;     PRs welcome!
