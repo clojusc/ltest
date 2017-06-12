@@ -19,10 +19,17 @@
   (refresh :after 'ltest.dev/run))
 
 (def suites
-  [{:name "Arbitrary Group 1"
-    :nss ['sample0 'sample1]}
-   {:name "Arbitrary Group 2"
-    :nss [:sample2 "sample3"]}])
+  [{:name "Arbitrary Division 1"
+    :nss ['nogroup
+          'ltest.group1.samples.sample0
+          'ltest.group1.samples.sample1]}
+   {:name "Arbitrary Division 2"
+    :nss [:ltest.group1.samples.sample2
+          "ltest.group1.samples.sample3"
+          'ltest.group2.samples.sample4
+          'ltest.group2.samples.sample5
+          'ltest.group2.samples.sample6
+          'ltest.group2.samples.sample7]}])
 
 ;; Now run the following:
 ;;

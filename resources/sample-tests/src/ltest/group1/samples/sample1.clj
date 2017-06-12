@@ -1,4 +1,4 @@
-(ns sample1
+(ns ltest.group1.samples.sample1
   (:require
     [clojure.test :refer [are deftest is testing]]
     [ltest.core :refer [run-test run-tests run-suite run-suites]]))
