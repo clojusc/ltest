@@ -5,7 +5,8 @@
 
 (deftest some-fail-error-test
   (testing "not so super-great tests"
-    (is false)
+    (is (= false true))
+    (is (= (+ 1 1) 3))
     (is true))
   (testing "more somewhat less than awesome tests"
     (is true)
