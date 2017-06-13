@@ -1,5 +1,7 @@
 # ltest
 
+[![][logo]][logo-large]
+
 *A custom test runner for clojure.test with detailed, coloured output and summaries*
 
 #### Contents
@@ -22,6 +24,9 @@ relating to the fact that there's not quite enough information presented to
 maximally assist in debugging ... that one often has to piece things together.
 Thanks to @chris-durbin, who urged an implementation follow-up to make things
 better, ltest for Clojure is now a thing.
+
+The Clojure ltest test runner was inspired by the
+[LFE ltest runner][lfe-test-runner], whence it got its name.
 
 
 ## Feature List [&#x219F;](#contents)
@@ -52,9 +57,6 @@ developers) are the following:
   divisions of tests
   * useful for running unit tests and integration tests together
   * called "suites" in ltest
-
-The Clojure ltest test runner was inspired by the
-[LFE ltest runner][lfe-test-runner], whence it got its name.
 
 
 ## Usage [&#x219F;](#contents)
@@ -150,6 +152,9 @@ Distributed under the Apache License, Version 2.0.
 
 
 <!-- Named page links below: /-->
+
+[logo]: resources/images/test-dummies-small.jpg
+[logo-large]: resources/images/test-dummies.jpg
 
 [screen1-thumb]: resources/images/ns-test-thumb.png
 [screen1]: resources/images/ns-test.png
