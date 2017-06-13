@@ -2,7 +2,45 @@
 
 *A custom test runner for clojure.test with detailed, coloured output and summaries*
 
-The Clojure ltest test runner was inspired by the [LFE ltest runner]().
+This project started as a complaint (a numbered list of them) on a Slack
+channel about the default test runner for `clojure.test`. Most of these
+relating to the fact that there's not quite enough information presented to
+maximally assist in debugging ... that one often has to piece things together.
+Thanks to @chris-durbin, who urged an implementation follow-up to make things
+better, ltest for Clojure is now a thing.
+
+
+## Feature List
+
+The basic needs ltest aims to resolve (admittedly important for only a subset of
+developers) are the following:
+
+* a detailed and explicit reporting-while-testing on what's getting tested
+  * namespace
+  * function
+  * assertion
+* explicit test status for each assertion (`OK`, `FAIL`, `ERROR`)
+* a separation of reporting-while-testing and failure/error details
+  * the running status of tests should be kept visually clean
+  * failures and errors should be grouped separately
+  * failure and error reporting should be done at the end, after the summary,
+    in their own sections
+* failure and error reporting should include the full namespace + function of
+  where the issue occurred for easier viewing/copying+pasting
+* different status output, sections, etc., should use ANSI terminal colors
+  to assist with quick and easy identification of issues, data, etc.
+* tests should be ordered alphabetically
+* an opinionated default grouping should be offered
+  * by default, group by the top two elements of a namespace (e.g.,
+    `a.b.c.d` and `a.b.e.f` would both be grouped in `a.b`)
+  * developers should have the ability ot override this easily
+* users/developers should have the ability to form arbitrary high-level
+  divisions of tests
+  * useful for running unit tests and integration tests together
+  * called "suites" in ltest
+
+The Clojure ltest test runner was inspired by the
+[LFE ltest runner][lfe-test-runner], whence it got its name.
 
 
 ## Usage
@@ -26,6 +64,7 @@ Note that this includes, in order:
 * summary results
 * failure listings
 * error listings
+
 
 ### Running One Test
 
@@ -106,3 +145,5 @@ Distributed under the Apache License, Version 2.0.
 [screen3]: resources/images/suite-test.png
 [screen4-thumb]: resources/images/suites-tests-thumb.png
 [screen4]: resources/images/suites-tests.png
+
+[lfe-test-runner]: https://github.com/lfex/ltest#the-lfe-test-runner-
