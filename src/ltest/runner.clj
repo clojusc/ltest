@@ -176,6 +176,21 @@
 ;;;   Test runner implementation/overrides   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
+(defn run-test
+  "Run a single test given in the form of a var, e.g.:
+
+    #'my.lib.tests.ns/my-test."
+  [ns-test-var]
+  (test/test-vars [ns-test-var])
+  (let [results {:test @*tests*
+                 :pass @*passed*
+                 :failures @*failures*
+                 :errors @*errors*}]
+    (-> results
+        (reset-counters!)
+        (assoc :fail (count (:failures results))
+               :error (count (:errors results))))))
+
 (defn run-tests
   "Runs all tests in the given namespaces; prints results. Defaults to current
   namespace if none given. Returns a map summarizing test results. Note that
@@ -184,110 +199,38 @@
     (run-tests [*ns*]))
   ([& nss]
     (let [namespaces (map util/get-ns nss)
-          summary (assoc (apply merge-with + (map test/test-ns namespaces))
-                    :type :summary)]
-      (-> summary
+          results (apply merge-with + (map test/test-ns namespaces))]
+      (-> results
           (assoc :errors @*errors*
                  :failures @*failures*)
           (reset-counters!)))))
 
-(defn run-test
-  "Run a single test given in the form of a var, e.g.:
+(defn run-suite
+  "Run a suite of tests."
+  ([suite]
+    (apply run-suite (util/extract-suite suite)))
+  ([suite-name nss]
+    (run-suite suite-name nss nil))
+  ([suite-name nss action-fn]
+    (run-suite suite-name nss action-fn util/default-group-formatter))
+  ([suite-name nss action-fn format-fn]
+    (run-suite suite-name nss action-fn format-fn util/default-grouper))
+  ([suite-name nss action-fn format-fn grouper-fn]
+    (println (styles/style *style* :divider (str "\n" util/divider)))
+    (println (styles/style *style* :suite suite-name))
+    (println (styles/style *style* :divider util/divider))
+    (as-> nss data
+          (util/do-grouped-nss data
+                           (or action-fn run-tests)
+                           format-fn
+                           grouper-fn
+                           {:style *style*})
+          (reduce conj [] data))))
 
-    #'my.lib.tests.ns/my-test."
-  [ns-test-var]
-  (test/test-vars [ns-test-var])
-  (let [result {:tests @*tests*
-                :pass @*passed*
-                :failures @*failures*
-                :errors @*errors*}]
-    (reset-counters!)
-    result))
-
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;   Custom summary reporter   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
-
-(defn show-summary
-  [results]
-  (println)
-  (println util/divider)
-  (println "Results")
-  (println util/divider)
-  (println "Total tests:" (reduce + 0 (map :test results)))
-  (println "Assertion passes:" (reduce + 0 (map :pass results)))
-  (println "Assertion failures:" (reduce + 0 (map :fail results)))
-  (println "Assertion errors:" (reduce + 0 (map :error results)))
-  (println)
-  results)
-
-(defn show-failure
-  [result]
-  (println (format "Test: %s/%s"
-                   (styles/style *style* :ns (:ns result))
-                   (styles/style *style* :test (:test result))))
-  (println "File:" (:file result))
-  (println "Line number:" (:line result))
-  (println (format "%s: %s"
-                   (styles/style *style* :pass "Expected")
-                   (:expected result)))
-  (println (format "%s: %s"
-                   (styles/style *style* :fail "Actual")
-                    (:actual result)))
-  (println util/subdivider))
-
-(defn show-failure-set
-  [result]
-  (dorun
-    (map show-failure result)))
-
-(defn show-error
-  [result]
-  (println (format "Test: %s/%s"
-                   (styles/style *style* :ns (:ns result))
-                   (styles/style *style* :test (:test result))))
-  (println "File:" (:file result))
-  (println "Line number:" (:line result))
-  (println (format "%s: %s"
-                   (styles/style *style* :error-header "Message")
-                   (:message result)))
-  (println (format "%s: %s"
-                   (styles/style *style* :error-header "Error")
-                   (:actual result)))
-  (println (:actual result))
-  (println util/subdivider))
-
-(defn show-error-set
-  [result]
-  (dorun
-    (map show-error result)))
-
-(defn show-failures
-  [results]
-  (when (pos? (reduce + 0 (map :fail results)))
-    (println (styles/style *style* :fail-divider util/divider))
-    (println (styles/style *style* :fail-header "Failures"))
-    (println (styles/style *style* :fail-divider util/divider))
-    (println)
-    (dorun
-      (->> results
-           (map :failures)
-           (remove empty?)
-           (map show-failure-set)))
-    (println))
-  results)
-
-(defn show-errors
-  [results]
-  (when (pos? (reduce + 0 (map :error results)))
-    (println (styles/style *style* :error-divider util/divider))
-    (println (styles/style *style* :error-header "Errors"))
-    (println (styles/style *style* :error-divider util/divider))
-    (println)
-    (dorun
-      (->> results
-           (map :errors)
-           (remove empty?)
-           (map show-error-set)))
-    (println))
-  results)
+(defn run-suites
+  "Run a collection of suites of tests."
+  [suites]
+  (->> suites
+       (map run-suite)
+       (reduce conj [])
+       (flatten)))
