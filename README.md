@@ -2,6 +2,20 @@
 
 *A custom test runner for clojure.test with detailed, coloured output and summaries*
 
+#### Contents
+
+* [About](#about-)
+* [Feature List](#feature-list-)
+* [Usage](#usage-)
+  * [Running Multiple Tests](#running-multiple-tests-)
+  * [Running One Test](#running-one-test-)
+  * [Running a Suite](#running-a-suite-)
+  * [Running Multiple Suites](#running-multiple-suites-)
+* [License](#license-)
+
+
+## About [&#x219F;](#contents)
+
 This project started as a complaint (a numbered list of them) on a Slack
 channel about the default test runner for `clojure.test`. Most of these
 relating to the fact that there's not quite enough information presented to
@@ -10,7 +24,7 @@ Thanks to @chris-durbin, who urged an implementation follow-up to make things
 better, ltest for Clojure is now a thing.
 
 
-## Feature List
+## Feature List [&#x219F;](#contents)
 
 The basic needs ltest aims to resolve (admittedly important for only a subset of
 developers) are the following:
@@ -43,9 +57,9 @@ The Clojure ltest test runner was inspired by the
 [LFE ltest runner][lfe-test-runner], whence it got its name.
 
 
-## Usage
+## Usage [&#x219F;](#contents)
 
-### Running Multiple Tests
+### Running Multiple Tests [&#x219F;](#contents)
 
 Collections of tests may be run with the `(ltest/run-tests)` function. The
 following example passing just one test namespace, but any number may be
@@ -66,7 +80,7 @@ Note that this includes, in order:
 * error listings
 
 
-### Running One Test
+### Running One Test [&#x219F;](#contents)
 
 A similar approach with analagous reporting is available for running single
 tests, but instead of a namespace, a namespace-qualified test function (as
@@ -81,7 +95,7 @@ Screenshot:
 [![][screen2-thumb]][screen2]
 
 
-### Running a Suite
+### Running a Suite [&#x219F;](#contents)
 
 In ltest, test suites are aribitrary named groupings of tests. As with
 `run-tests`, any number of namespaces my be provided in the `:nss` vector:
@@ -96,7 +110,7 @@ Screenshot:
 [![][screen3-thumb]][screen3]
 
 
-### Running Multiple Suites
+### Running Multiple Suites [&#x219F;](#contents)
 
 You can also define multiple suites and run them together (useful for unit and
 integration tests):
@@ -128,7 +142,7 @@ Screenshot:
 [![][screen4-thumb]][screen4]
 
 
-## License
+## License [&#x219F;](#contents)
 
 Copyright © 2017, Clojure-Aided Enrichment Center
 
