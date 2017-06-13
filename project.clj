@@ -26,7 +26,11 @@
         "dev-resources/src"
         "resources/sample-tests/src"]
       :repl-options {
-        :init-ns ltest.dev}}}
+        :init-ns ltest.dev
+        :welcome
+          ~(do
+              (println (slurp "resources/text/banner.txt"))
+              (println (slurp "resources/text/loading.txt")))}}}
   :aliases {
     "check-deps" ["ancient" "check" ":all"]
     "kibit" ["do" ["shell" "echo" "== Kibit =="]
