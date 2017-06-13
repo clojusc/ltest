@@ -31,5 +31,5 @@
     "check-deps" ["ancient" "check" ":all"]
     "kibit" ["do" ["shell" "echo" "== Kibit =="]
                   ["kibit"]]
-    "outlaw" ["eastwood" "{:namespaces [:source-paths]}"]
+    "outlaw" ["eastwood" "{:namespaces [:source-paths] :source-paths [\"src\"]}"]
     "lint" ["do" ["check"] ["kibit"] ["outlaw"]]})

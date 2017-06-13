@@ -8,7 +8,7 @@
   ([chr]
     (bar chr 80))
   ([chr len]
-    (apply str (repeat len chr))))
+    (string/join (repeat len chr))))
 
 (def divider
   "Section divider string."
@@ -95,6 +95,8 @@
     (do-grouped-nss nss action-fn default-group-formatter))
   ([nss action-fn format-fn]
     (do-grouped-nss nss action-fn format-fn default-grouper))
+  ([nss action-fn format-fn grouper-fn]
+    (do-grouped-nss nss action-fn format-fn grouper-fn {}))
   ([nss action-fn format-fn grouper-fn options]
     (->> nss
          (grouper-fn)

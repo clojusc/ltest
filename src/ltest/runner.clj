@@ -52,7 +52,7 @@
             (ansi/style postfix :blue)
             (styles/style *style*
                           :elipsis
-                          (apply str (repeat elide-count ".")))
+                          (string/join (repeat elide-count ".")))
             (color-status status))))
 
 (defn line-format

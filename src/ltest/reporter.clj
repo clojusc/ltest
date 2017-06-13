@@ -36,8 +36,7 @@
 
 (defn show-failure-set
   [result]
-  (dorun
-    (map show-failure result)))
+  (run! show-failure result))
 
 (defn show-error
   [result]
@@ -57,8 +56,7 @@
 
 (defn show-error-set
   [result]
-  (dorun
-    (map show-error result)))
+  (run! show-error result))
 
 (defn show-failures
   [results]

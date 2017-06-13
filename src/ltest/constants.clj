@@ -1,8 +1,10 @@
-(ns ltest.constants)
+(ns ltest.constants
+  (:require
+    [clojure.string :as string]))
 
-(def ns-indent (apply str (repeat 2 " ")))
-(def test-indent (apply str (repeat 4 " ")))
-(def assertion-indent (apply str (repeat 6 " ")))
+(def ns-indent (string/join (repeat 2 " ")))
+(def test-indent (string/join (repeat 4 " ")))
+(def assertion-indent (string/join (repeat 6 " ")))
 
 (def max-len 80)
 (def min-elide 3)

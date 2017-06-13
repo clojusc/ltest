@@ -10,7 +10,7 @@
   (dorun
     (->> a-test
          (runner/run-test)
-         (conj [])
+         vector
          (reporter/do-reports)))
   :ok)
 
@@ -19,7 +19,7 @@
   (dorun
     (->> tests
          (apply runner/run-tests)
-         (conj [])
+         vector
          (reporter/do-reports)))
   :ok)
 
