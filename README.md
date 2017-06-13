@@ -1,5 +1,12 @@
 # ltest
 
+[![Build Status][travis-badge]][travis]
+[![Dependencies Status][deps-badge]][deps]
+[![Clojars Project][clojars-badge]][clojars]
+[![Tag][tag-badge]][tag]
+[![JDK version][jdk-v]](.travis.yml)
+[![Clojure version][clojure-v]](project.clj)
+
 [![][logo]][logo-large]
 
 *A custom test runner for clojure.test with detailed, coloured output and summaries*
@@ -155,6 +162,17 @@ Distributed under the Apache License, Version 2.0.
 
 [logo]: resources/images/test-dummies-small.jpg
 [logo-large]: resources/images/test-dummies.jpg
+
+[travis]: https://travis-ci.org/clojusc/ltest
+[travis-badge]: https://travis-ci.org/clojusc/ltest.png?branch=master
+[deps]: http://jarkeeper.com/clojusc/ltest
+[deps-badge]: http://jarkeeper.com/clojusc/ltest/status.svg
+[tag-badge]: https://img.shields.io/github/tag/clojusc/ltest.svg
+[tag]: https://github.com/clojusc/ltest/tags
+[clojure-v]: https://img.shields.io/badge/clojure-1.8.0-blue.svg
+[jdk-v]: https://img.shields.io/badge/jdk-1.7+-blue.svg
+[clojars]: https://clojars.org/clojusc/ltest
+[clojars-badge]: https://img.shields.io/clojars/v/clojusc/ltest.svg
 
 [screen1-thumb]: resources/images/ns-test-thumb.png
 [screen1]: resources/images/ns-test.png
