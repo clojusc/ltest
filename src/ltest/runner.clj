@@ -3,10 +3,56 @@
     [clansi :as ansi]
     [clojure.stacktrace :as stack]
     [clojure.string :as string]
+    [clojure.template :as temp]
     [clojure.test :as test]
     [ltest.constants :as const]
     [ltest.styles :as styles]
-    [ltest.util :as util]))
+    [ltest.util :as util]
+    [potemkin :refer [import-vars]]))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   clojure.test implementation   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;
+;;; In order to avoid stomping on all uses of clojure.test in an applicatoin
+;;; that has included ltest, we're going to provide an implementation of
+;;; `clojure.test` in this namespace. As such, we'll need to bring in
+;;; everything we're not implementing ourselves.
+
+(import-vars
+  [clojure.test
+   ;; functions
+   assert-any
+   assert-predicate
+   compose-fixtures
+   do-report
+   file-position
+   function?
+   get-possibly-unbound-var
+   inc-report-counter
+   join-fixtures
+   run-all-tests
+   successful?
+   test-all-vars
+   test-ns
+   test-var
+   test-vars
+   testing-contexts-str
+   testing-vars-str
+   ;; multimethods
+   assert-expr
+   report
+   use-fixtures
+   ;; macros
+   are
+   deftest
+   deftest-
+   is
+   set-test
+   testing
+   try-expr
+   with-test
+   with-test-out])
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Global vars   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -74,17 +120,17 @@
   ([prefix idx file line status]
    (line-format prefix idx (format " (%s:%s)" file line) status)))
 
-(defn test-ns
+(defn get-test-ns
   "Extract the test's namespace."
   ([]
-    (test-ns (meta (first test/*testing-vars*))))
+    (get-test-ns (meta (first test/*testing-vars*))))
   ([m]
     (ns-name (:ns m))))
 
-(defn test-name
+(defn get-test-name
   "Extract the test's name."
   ([]
-    (test-name {:var (first test/*testing-vars*)}))
+    (get-test-name {:var (first test/*testing-vars*)}))
   ([m]
     (:name (meta (:var m)))))
 
@@ -92,15 +138,15 @@
 ;;;   Reporter implementation/overrides   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
-(defmethod test/report :default
+(defmethod report :default
   [m]
-  (test/with-test-out
+  (with-test-out
     (prn m)))
 
-(defmethod test/report :pass
+(defmethod report :pass
   [m]
-  (test/with-test-out
-    (test/inc-report-counter :pass)
+  (with-test-out
+    (inc-report-counter :pass)
     (swap! *passed* inc)
     (swap! *assertion-count* inc)
     (println
@@ -108,15 +154,15 @@
                    @*assertion-count*
                    const/pass))))
 
-(defmethod test/report :fail
+(defmethod report :fail
   [m]
   (swap! *failures*
          conj
          (assoc m
-                :ns (test-ns)
-                :test (test-name)))
-  (test/with-test-out
-    (test/inc-report-counter :fail)
+                :ns (get-test-ns)
+                :test (get-test-name)))
+  (with-test-out
+    (inc-report-counter :fail)
     (swap! *assertion-count* inc)
     (println
       (line-format const/assertion-indent
@@ -125,15 +171,15 @@
                    (:line m)
                    const/fail))))
 
-(defmethod test/report :error
+(defmethod report :error
   [m]
   (swap! *errors*
          conj
          (assoc m
-                :ns (test-ns)
-                :test (test-name)))
-  (test/with-test-out
-    (test/inc-report-counter :error)
+                :ns (get-test-ns)
+                :test (get-test-name)))
+  (with-test-out
+    (inc-report-counter :error)
     (swap! *assertion-count* inc)
     (println
       (line-format const/assertion-indent
@@ -142,32 +188,32 @@
                    (:line m)
                    const/error))))
 
-(defmethod test/report :begin-test-ns
+(defmethod report :begin-test-ns
   [m]
-  (test/with-test-out
+  (with-test-out
     (println const/ns-indent
              (styles/style *style*
                            :ns
-                           (test-ns m)))))
+                           (get-test-ns m)))))
 
-(defmethod test/report :end-test-ns
+(defmethod report :end-test-ns
   [m])
 
-(defmethod test/report :begin-test-var
+(defmethod report :begin-test-var
   [m]
   (swap! *tests* inc)
-  (test/with-test-out
+  (with-test-out
     (println const/test-indent
              (styles/style *style*
                            :test
-                           (test-name m)))))
+                           (get-test-name m)))))
 
-(defmethod test/report :end-test-var
+(defmethod report :end-test-var
   [m]
   (reset! *assertion-count* 0))
 
-(defmethod test/report :summary [m]
-  (test/with-test-out
+(defmethod report :summary [m]
+  (with-test-out
    (println "\nRan" (:test m) "tests containing"
             (+ (:pass m) (:fail m) (:error m)) "assertions.")
    (println (:fail m) "failures," (:error m) "errors.")))
@@ -181,7 +227,7 @@
 
     #'my.lib.tests.ns/my-test."
   [ns-test-var]
-  (test/test-vars [ns-test-var])
+  (test-vars [ns-test-var])
   (let [results {:test @*tests*
                  :pass @*passed*
                  :failures @*failures*
@@ -198,8 +244,11 @@
   ([]
     (run-tests [*ns*]))
   ([& nss]
+    (println "Got nss:" nss)
     (let [namespaces (map util/get-ns nss)
-          results (apply merge-with + (map test/test-ns namespaces))]
+          _ (println "Got namespaces:" namespaces)
+          results (apply merge-with + (map test-ns namespaces))
+          _ (println "Got results:" results)]
       (-> results
           (assoc :errors @*errors*
                  :failures @*failures*)
