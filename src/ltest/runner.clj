@@ -225,7 +225,8 @@
                            format-fn
                            grouper-fn
                            {:style *style*})
-          (reduce conj [] data))))
+          (reduce conj [] data)
+          (flatten data))))
 
 (defn run-suites
   "Run a collection of suites of tests."

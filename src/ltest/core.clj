@@ -26,9 +26,9 @@
 (defn run-suite
   [suite]
   (dorun
-    (-> suite
-        (runner/run-suite)
-        (reporter/do-reports)))
+    (->> suite
+         (runner/run-suite)
+         (reporter/do-reports)))
   :ok)
 
 (defn run-suites
