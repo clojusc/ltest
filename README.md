@@ -29,7 +29,7 @@ This project started as a complaint (a numbered list of them) on a Slack
 channel about the default test runner for `clojure.test`. Most of these
 relating to the fact that there's not quite enough information presented to
 maximally assist in debugging ... that one often has to piece things together.
-Thanks to @chris-durbin, who urged an implementation follow-up to make things
+Thanks to [@chris-durbin][chris-durbin], who urged an implementation follow-up to make things
 better, ltest for Clojure is now a thing.
 
 The Clojure ltest test runner was inspired by the
@@ -184,3 +184,4 @@ Distributed under the Apache License, Version 2.0.
 [screen4]: resources/images/suites-tests.png
 
 [lfe-test-runner]: https://github.com/lfex/ltest#the-lfe-test-runner-
+[chris-durbin]: https://github.com/chris-durbin
