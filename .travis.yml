@@ -1,7 +1,8 @@
 language: clojure
 script:
-  - lein deps
+  - lein check-deps
   - lein compile
+  - lein lint
   - lein test
   - lein uberjar
 jdk:
