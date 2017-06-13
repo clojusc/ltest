@@ -4,6 +4,8 @@
     [clojure.test :refer [*test-out*]]
     [clojure.tools.namespace.repl :as repl]
     [ltest.core :as ltest]
+    [ltest.reporter :as reporter]
+    [ltest.runner :as runner]
     [ltest.util :as util]))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
