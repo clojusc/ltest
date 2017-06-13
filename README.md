@@ -56,6 +56,39 @@ Screenshot:
 
 [![][screen3-thumb]][screen3]
 
+
+### Running Multiple Suites
+
+You can also define multiple suites and run them together (useful for unit and
+integration tests):
+
+```clj
+(def suite-1
+  {:name "Arbitrary Division 1"
+   :nss ['nogroup
+         'ltest.group1.samples.sample0
+         'ltest.group1.samples.sample1]})
+
+(def suite-2
+  {:name "Arbitrary Division 2"
+   :nss [:ltest.group1.samples.sample2
+         "ltest.group1.samples.sample3"
+         'ltest.group2.samples.sample4
+         'ltest.group2.samples.sample5
+         'ltest.group2.samples.sample6
+         'ltest.group2.samples.sample7]})
+
+(def suites
+  [suite-1 suite-2])
+
+(ltest/run-suites suites)
+```
+
+Screenshot:
+
+[![][screen4-thumb]][screen4]
+
+
 ## License
 
 Copyright © 2017, Clojure-Aided Enrichment Center
@@ -71,3 +104,5 @@ Distributed under the Apache License, Version 2.0.
 [screen2]: resources/images/single-test.png
 [screen3-thumb]: resources/images/suite-test-thumb.png
 [screen3]: resources/images/suite-test.png
+[screen4-thumb]: resources/images/suites-tests-thumb.png
+[screen4]: resources/images/suites-tests.png
