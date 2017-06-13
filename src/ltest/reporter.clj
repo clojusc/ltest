@@ -1,5 +1,6 @@
 (ns ltest.reporter
   (:require
+    [io.aviso.exception :as pretty-ex]
     [ltest.runner :as runner :refer [*style*]]
     [ltest.styles :as styles]
     [ltest.util :as util]))
@@ -51,7 +52,7 @@
   (println (format "%s: %s"
                    (styles/style *style* :error-header "Error")
                    (:actual result)))
-  (println (:actual result))
+  (println (pretty-ex/write-exception (:actual result)))
   (println util/subdivider))
 
 (defn show-error-set

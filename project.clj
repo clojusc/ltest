@@ -6,6 +6,7 @@
     :url "http://www.apache.org/licenses/LICENSE-2.0"}
   :dependencies [
     [clansi "1.0.0" :exclusions [org.clojure/clojure]]
+    [io.aviso/pretty "0.1.33"]
     [org.clojure/clojure "1.8.0"]
     [potemkin "0.4.3"]]
   :profiles {
