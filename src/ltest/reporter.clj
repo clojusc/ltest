@@ -51,7 +51,7 @@
   (println (format "%s: %s"
                    (styles/style *style* :error-header "Error")
                    (:actual result)))
-  (println (pretty-ex/write-exception (:actual result)))
+  (pretty-ex/write-exception (:actual result))
   (println util/subdivider))
 
 (defn show-error-set
