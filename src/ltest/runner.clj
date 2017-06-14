@@ -115,8 +115,11 @@
 
 (defmethod report :default
   [m]
-  (test/with-test-out
-    (prn m)))
+  ;; XXX With the following un-commented, reports of type
+  ;;     `:clojure.test.check.clojure-test/trial` were being printed
+  ; (test/with-test-out
+  ;   (prn m))
+  )
 
 (defmethod report :pass
   [m]
