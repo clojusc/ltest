@@ -75,7 +75,7 @@ following example passing just one test namespace, but any number may be
 passed as additional arguments:
 
 ```clj
-(ltest/run-tests 'ltest.group1.samples.sample2)
+(ltest/run-tests ['ltest.group1.samples.sample1])
 ```
 
 Here's is a screenshot of this call's result in the ltest dev environment
