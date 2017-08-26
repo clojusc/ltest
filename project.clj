@@ -8,9 +8,9 @@
     [org.clojure/clojure]]
   :dependencies [
     [clansi "1.0.0"]
-    [io.aviso/pretty "0.1.33"]
+    [io.aviso/pretty "0.1.34"]
     [org.clojure/clojure "1.8.0"]
-    [potemkin "0.4.3"]]
+    [potemkin "0.4.4"]]
   :profiles {
     :dev {
       :dependencies [
