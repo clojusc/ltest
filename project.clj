@@ -12,6 +12,8 @@
     [org.clojure/clojure "1.8.0"]
     [potemkin "0.4.4"]]
   :profiles {
+    :uberjar {
+      :aot :all}
     :dev {
       :dependencies [
         [org.clojure/tools.namespace "0.2.11"]]
