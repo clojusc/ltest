@@ -8,16 +8,16 @@
     [org.clojure/clojure]]
   :dependencies [
     [clansi "1.0.0"]
-    [io.aviso/pretty "0.1.33"]
+    [io.aviso/pretty "0.1.34"]
     [org.clojure/clojure "1.8.0"]
-    [potemkin "0.4.3"]]
+    [potemkin "0.4.4"]]
   :profiles {
     :dev {
       :dependencies [
         [org.clojure/tools.namespace "0.2.11"]]
       :plugins [
         [jonase/eastwood "0.2.4"]
-        [lein-ancient "0.6.10"]
+        [lein-ancient "0.6.12"]
         [lein-bikeshed "0.4.1"]
         [lein-kibit "0.1.5"]
         [lein-shell "0.5.0"]
