@@ -1,7 +1,9 @@
 (ns ltest.util
   (:require
     [clojure.string :as string]
-    [ltest.styles :as styles]))
+    [ltest.styles :as styles])
+  (:import
+   (clojure.lang Keyword)))
 
 (defn bar
   "Create a string of a given length composed of the given character."
@@ -112,3 +114,13 @@
 (defn all-ns-sorted
   []
   (sort-namespaces (all-ns)))
+
+(defn filtered-ns
+  [re]
+  (filter #(re-matches re (name (ns-name %))) (all-ns-sorted)))
+
+(defn tagged-ns
+  ([^Keyword tag]
+    (tagged-ns (all-ns-sorted) tag))
+  ([nss ^Keyword tag]
+    (filter #(tag (meta %)) nss)))
