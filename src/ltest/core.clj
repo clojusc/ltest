@@ -10,22 +10,16 @@
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 
 (defn unit-ns
-  ([]
-    (tagged-ns :unit))
-  ([re]
-    (tagged-ns (filtered-ns re) :unit)))
+  [re]
+  (util/filtered-tagged-ns re :unit))
 
 (defn integration-ns
-  ([]
-    (tagged-ns :integration))
-  ([re]
-    (tagged-ns (filtered-ns re) :integration)))
+  [re]
+  (util/filtered-tagged-ns re :integration))
 
 (defn system-ns
-  ([]
-    (tagged-ns :system))
-  ([re]
-    (tagged-ns (filtered-ns re) :system)))
+  [re]
+  (util/filtered-tagged-ns re :system))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Test-running functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
