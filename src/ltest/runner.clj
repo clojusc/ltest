@@ -246,7 +246,7 @@
     (ltest.runner/run-tests (util/all-ns-sorted) opts))
   ([re opts]
     (ltest.runner/run-tests
-      (filter #(re-matches re (name (ns-name %))) (util/all-ns-sorted))
+      (util/filtered-ns re)
       opts)))
 
 (defn run-suite
