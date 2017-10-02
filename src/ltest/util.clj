@@ -124,3 +124,9 @@
     (tagged-ns (all-ns-sorted) tag))
   ([nss ^Keyword tag]
     (filter #(tag (meta %)) nss)))
+
+(defn filtered-tagged-ns
+  ([tag]
+    (tagged-ns tag))
+  ([re tag]
+    (tagged-ns (filtered-ns re) tag)))
