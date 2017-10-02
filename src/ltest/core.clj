@@ -5,6 +5,32 @@
     [ltest.styles :as styles]
     [ltest.util :as util]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Namespace utility functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn unit-ns
+  ([]
+    (tagged-ns :unit))
+  ([re]
+    (tagged-ns (filtered-ns re) :unit)))
+
+(defn integration-ns
+  ([]
+    (tagged-ns :integration))
+  ([re]
+    (tagged-ns (filtered-ns re) :integration)))
+
+(defn system-ns
+  ([]
+    (tagged-ns :system))
+  ([re]
+    (tagged-ns (filtered-ns re) :system)))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Test-running functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn run-test
   [a-test]
   (dorun
