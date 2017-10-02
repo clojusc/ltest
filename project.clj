@@ -1,4 +1,4 @@
-(defproject clojusc/ltest "0.1.0"
+(defproject clojusc/ltest "0.2.0-SNAPSHOT"
   :description "A custom test runner for clojure.test with detailed, coloured output and summaries"
   :url "https://github.com/clojusc/ltest"
   :license {
@@ -12,6 +12,8 @@
     [org.clojure/clojure "1.8.0"]
     [potemkin "0.4.4"]]
   :profiles {
+    :uberjar {
+      :aot :all}
     :dev {
       :dependencies [
         [org.clojure/tools.namespace "0.2.11"]]
