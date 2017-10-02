@@ -75,3 +75,19 @@
          (runner/run-suites suites)
          (reporter/do-reports)))
   :ok)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Tagged-test-running functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn run-unit-tests
+  [re]
+  (run-tests (unit-ns re)))
+
+(defn run-integration-tests
+  [re]
+  (run-tests (integration-ns re)))
+
+(defn run-system-tests
+  [re]
+  (run-tests (unit-ns re)))
