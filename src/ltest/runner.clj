@@ -243,12 +243,10 @@
   ([]
     (ltest.runner/run-all-tests {}))
   ([opts]
-    (ltest.runner/run-tests (all-ns) opts))
+    (ltest.runner/run-tests (util/all-ns-sorted) opts))
   ([re opts]
     (ltest.runner/run-tests
-      (->> (all-ns)
-           (filter #(re-matches re (name (ns-name %))))
-           (sort))
+      (filter #(re-matches re (name (ns-name %))) (util/all-ns-sorted))
       opts)))
 
 (defn run-suite

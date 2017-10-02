@@ -101,3 +101,14 @@
 (defn extract-suite
   [suite]
   [(:name suite) (:nss suite) (:runner suite)])
+
+(defn sort-namespaces
+  [nss]
+  (->> nss
+       (map (fn [x] [(str x) x]))
+       (sort)
+       (map second)))
+
+(defn all-ns-sorted
+  []
+  (sort-namespaces (all-ns)))
