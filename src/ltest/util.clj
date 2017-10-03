@@ -1,7 +1,9 @@
 (ns ltest.util
   (:require
     [clojure.string :as string]
-    [ltest.styles :as styles]))
+    [ltest.styles :as styles])
+  (:import
+   (clojure.lang Keyword)))
 
 (defn bar
   "Create a string of a given length composed of the given character."
@@ -77,32 +79,54 @@
   (sort (group-by ns->app nss)))
 
 (defn process-group
-  [[group-name nss] action-fn format-fn options]
+  [[group-name nss] action-fn format-fn opts]
   (format-fn group-name)
-  (let [results (->> nss
-                     (map (fn [x]
-                              (get-ns x)
-                              (action-fn x)))
-                     (reduce conj []))]
+  (let [results (action-fn nss opts)]
     (println \newline
-             (styles/style (:style options) :subdivider subdivider))
+             (styles/style (:style opts) :subdivider subdivider))
     results))
 
 (defn do-grouped-nss
   "Given a list of namespaces, group them and run the given function against
   each namespace. Optionally provide a group formatting function."
   ([nss action-fn]
-    (do-grouped-nss nss action-fn default-group-formatter))
-  ([nss action-fn format-fn]
-    (do-grouped-nss nss action-fn format-fn default-grouper))
-  ([nss action-fn format-fn grouper-fn]
-    (do-grouped-nss nss action-fn format-fn grouper-fn {}))
-  ([nss action-fn format-fn grouper-fn options]
+    (do-grouped-nss nss action-fn {}))
+  ([nss action-fn opts]
+    (do-grouped-nss nss action-fn default-group-formatter opts))
+  ([nss action-fn format-fn opts]
+    (do-grouped-nss nss action-fn format-fn default-grouper opts))
+  ([nss action-fn format-fn grouper-fn opts]
     (->> nss
          (grouper-fn)
-         (map #(process-group % action-fn format-fn options))
-         (reduce conj []))))
+         (map #(process-group % action-fn format-fn opts)))))
 
 (defn extract-suite
   [suite]
   [(:name suite) (:nss suite) (:runner suite)])
+
+(defn sort-namespaces
+  [nss]
+  (->> nss
+       (map (fn [x] [(str x) x]))
+       (sort)
+       (map second)))
+
+(defn all-ns-sorted
+  []
+  (sort-namespaces (all-ns)))
+
+(defn filtered-ns
+  [re]
+  (filter #(re-matches re (name (ns-name %))) (all-ns-sorted)))
+
+(defn tagged-ns
+  ([^Keyword tag]
+    (tagged-ns (all-ns-sorted) tag))
+  ([nss ^Keyword tag]
+    (filter #(tag (meta %)) nss)))
+
+(defn filtered-tagged-ns
+  ([tag]
+    (tagged-ns tag))
+  ([re tag]
+    (tagged-ns (filtered-ns re) tag)))

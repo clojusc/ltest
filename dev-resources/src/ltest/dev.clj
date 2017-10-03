@@ -40,8 +40,8 @@
 ;;
 ;; Run tests:
 ;;
-;;   (ltest/run-tests 'ltest.group2.samples.sample1
-;;                    'ltest.group2.samples.sample2)
+;;   (ltest/run-tests ['ltest.group2.samples.sample4
+;;                     'ltest.group2.samples.sample5])
 ;;
 ;; Run a suite:
 ;;
