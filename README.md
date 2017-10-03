@@ -56,7 +56,8 @@ developers) are the following:
   * &#x2705; namespace
   * &#x2705; function
   * &#x2705; assertion
-  * text of `(testing ...)` call (see ticket #11)
+  * text of `(testing ...)` call (see
+    [ticket #11](https://github.com/clojusc/ltest/issues/11))
 * &#x2705; explicit test status for each assertion (`OK`, `FAIL`, `ERROR`)
 * a separation of reporting-while-testing and failure/error details
   * &#x2705; the running status of tests should be kept visually clean
@@ -64,7 +65,7 @@ developers) are the following:
   * &#x2705; failure and error reporting should be done at the end, after the
     summary, in their own sections
   * suites should hold off until all suites have finished before reporting
-    (see ticket #12)
+    (see [ticket #12](https://github.com/clojusc/ltest/issues/12))
 * &#x2705; failure and error reporting should include the full namespace +
   function of where the issue occurred for easier viewing/copying+pasting
 * &#x2705; different status output, sections, etc., should use ANSI terminal
@@ -77,7 +78,8 @@ developers) are the following:
   * an opinionated default grouping for suites should be offered
     * &#x2705; by default, group by the top two elements of a namespace (e.g.,
       `a.b.c.d` and `a.b.e.f` would both be grouped in `a.b`)
-    * developers should have the ability ot override this easily
+    * developers should have the ability ot override this easily (see
+      [ticket #25](https://github.com/clojusc/ltest/issues/25))
 
 
 ## Usage [&#x219F;](#contents)
