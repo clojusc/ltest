@@ -223,9 +223,9 @@
   namespace if none given. Returns a map summarizing test results. Note that
   given namespaces may be a vector of strings, symbols, or vars."
   ([]
-    (run-tests [*ns*]))
+    (ltest.runner/run-tests [*ns*]))
   ([nss]
-    (run-tests nss {}))
+    (ltest.runner/run-tests nss {}))
   ([nss opts]
     (binding [test/report (:report opts test/report)]
       (let [namespaces (map util/get-ns nss)
@@ -241,12 +241,12 @@
   names matching the regular expression (with re-matches) will be
   tested."
   ([]
-    (run-all-tests {}))
+    (ltest.runner/run-all-tests {}))
   ([opts]
-    (run-tests (all-ns) opts))
+    (ltest.runner/run-tests (util/all-ns-sorted) opts))
   ([re opts]
-    (run-tests
-      (filter #(re-matches re (name (ns-name %))) (all-ns))
+    (ltest.runner/run-tests
+      (util/filtered-ns re)
       opts)))
 
 (defn run-suite
@@ -267,7 +267,7 @@
     (println (styles/style *style* :divider util/divider))
     (as-> nss data
           (util/do-grouped-nss data
-                               (or action-fn run-tests)
+                               (or action-fn ltest.runner/run-tests)
                                format-fn
                                grouper-fn
                                (merge {:style *style*} opts))

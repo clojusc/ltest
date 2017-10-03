@@ -5,6 +5,26 @@
     [ltest.styles :as styles]
     [ltest.util :as util]))
 
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Namespace utility functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn unit-ns
+  [re]
+  (util/filtered-tagged-ns re :unit))
+
+(defn integration-ns
+  [re]
+  (util/filtered-tagged-ns re :integration))
+
+(defn system-ns
+  [re]
+  (util/filtered-tagged-ns re :system))
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Test-running functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
 (defn run-test
   [a-test]
   (dorun
@@ -55,3 +75,19 @@
          (runner/run-suites suites)
          (reporter/do-reports)))
   :ok)
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;   Tagged-test-running functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+
+(defn run-unit-tests
+  [re]
+  (run-tests (unit-ns re)))
+
+(defn run-integration-tests
+  [re]
+  (run-tests (integration-ns re)))
+
+(defn run-system-tests
+  [re]
+  (run-tests (unit-ns re)))
