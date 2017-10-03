@@ -223,9 +223,15 @@ Likewse for integration and system tests:
 
 #### A `runner` Namespace [&#x219F;](#contents)
 
-In this particular runner, the "suite" functionality of ltest is not
-taken advantage of; instead, it relies upon metadata tags in the test
-namespaces.
+In this particular runner, the "suite" functionality of ltest is not taken
+advantage of; instead, our example runner below relies upon metadata tags in
+the test namespaces we've made. Note that the `ltest/run-*-tests` functions are
+conveniences provided by ltest; if you should want to tag your tests in any
+other arbitrary manner, creating convenience functions for your tags (e.g., to
+be used by the test runner) is very easy (see the `ltest.core` source for
+hints).
+
+Here is a sample runner namespace, intended to be called from the command line:
 
 ```clj
 (ns ur.proj.testing.runner
@@ -281,7 +287,8 @@ have it) siblimg to the `:profiles` or `:dependencies` sections.
   ...
 ```
 
-Now you can run the following to just test the parts of the project you want:
+Now you can use that to run the following, optionally limiting tests to what
+they have been tagged in their namespace:
 
 * `lein run-tests` (will run all types of tests)
 * `lein run-tests unit`
@@ -294,7 +301,7 @@ Now you can run the following to just test the parts of the project you want:
 In the example above, we used the arbitrary namespace metadata of `:unit`,
 `:integration`, and `:system` for our different types of tests. Now that you
 have made these annotations in the test namespaces, you can use them directly
-with `lein`, too (without using ltest), should you so choose. Simply add this
+with `lein`, too (without using ltest, should you so choose). Simply add this
 to your `project.clj` file's `:test` profile:
 
 ```clj
