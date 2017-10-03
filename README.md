@@ -255,7 +255,7 @@ Here is a sample runner namespace, intended to be called from the command line:
   []
   (println)
   (println (apply str (repeat 80 "=")))
-  (println "CMR Client Test Runner")
+  (println "Your Project Test Runner")
   (println (apply str (repeat 80 "=")))
   (println))
 
