@@ -78,7 +78,7 @@ developers) are the following:
   * an opinionated default grouping for suites should be offered
     * &#x2705; by default, group by the top two elements of a namespace (e.g.,
       `a.b.c.d` and `a.b.e.f` would both be grouped in `a.b`)
-    * developers should have the ability ot override this easily (see
+    * developers should have the ability to override this easily (see
       [ticket #25](https://github.com/clojusc/ltest/issues/25))
 
 
@@ -92,7 +92,7 @@ The functionality provided by this library my be used in several ways:
   [#10](https://github.com/clojusc/ltest/issues/10))
 
 The first two are discussed below. In both cases, the ltest library is
-utilized solely through it's primary namespace, e.g.:
+utilized solely through its primary namespace, e.g.:
 
 ```clj
 (require '[ltest.core :as ltest])
