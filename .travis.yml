@@ -1,14 +1,10 @@
 language: clojure
 script:
-  - lein check-deps
-  - lein compile
-  - lein lint
-  - lein test
-  - lein uberjar
+  - lein build
 jdk:
   - oraclejdk8
   - oraclejdk7
   - openjdk7
 notifications:
   email:
-      - oubiwann@gmail.com
+    - oubiwann@gmail.com

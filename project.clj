@@ -12,7 +12,7 @@
     [org.clojure/clojure "1.8.0"]
     [potemkin "0.4.4"]]
   :profiles {
-    :uberjar {
+    :ubercompile {
       :aot :all}
     :dev {
       :dependencies [
@@ -34,8 +34,17 @@
               (println (slurp "resources/text/banner.txt"))
               (println (slurp "resources/text/loading.txt")))}}}
   :aliases {
-    "check-deps" ["ancient" "check" ":all"]
+    "check-deps" ["with-profile" "+test" "ancient" "check" ":all"]
     "kibit" ["do" ["shell" "echo" "== Kibit =="]
                   ["kibit"]]
     "outlaw" ["eastwood" "{:namespaces [:source-paths] :source-paths [\"src\"]}"]
-    "lint" ["do" ["check"] ["kibit"] ["outlaw"]]})
+    "lint" ["do" ["check"] ["kibit"] ["outlaw"]]
+    "ubercompile" ["with-profile" "+ubercompile" "compile"]
+    "build" ["with-profile" "+test" "do"
+      ["check-deps"]
+      ["lint"]
+      ["ubercompile"]
+      ["clean"]
+      ["uberjar"]
+      ["clean"]
+      ["test"]]})
