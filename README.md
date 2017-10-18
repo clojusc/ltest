@@ -53,28 +53,33 @@ The basic needs ltest aims to resolve (admittedly important for only a subset of
 developers) are the following:
 
 * a detailed and explicit reporting-while-testing on what's getting tested
-  * namespace
-  * function
-  * assertion
-* explicit test status for each assertion (`OK`, `FAIL`, `ERROR`)
+  * &#x2705; namespace
+  * &#x2705; function
+  * &#x2705; assertion
+  * text of `(testing ...)` call (see
+    [ticket #11](https://github.com/clojusc/ltest/issues/11))
+* &#x2705; explicit test status for each assertion (`OK`, `FAIL`, `ERROR`)
 * a separation of reporting-while-testing and failure/error details
-  * the running status of tests should be kept visually clean
-  * failures and errors should be grouped separately
-  * failure and error reporting should be done at the end, after the summary,
-    in their own sections
-* failure and error reporting should include the full namespace + function of
-  where the issue occurred for easier viewing/copying+pasting
-* different status output, sections, etc., should use ANSI terminal colors
-  to assist with quick and easy identification of issues, data, etc.
-* tests should be ordered alphabetically
-* an opinionated default grouping should be offered
-  * by default, group by the top two elements of a namespace (e.g.,
-    `a.b.c.d` and `a.b.e.f` would both be grouped in `a.b`)
-  * developers should have the ability ot override this easily
-* users/developers should have the ability to form arbitrary high-level
+  * &#x2705; the running status of tests should be kept visually clean
+  * &#x2705; failures and errors should be grouped separately
+  * &#x2705; failure and error reporting should be done at the end, after the
+    summary, in their own sections
+  * suites should hold off until all suites have finished before reporting
+    (see [ticket #12](https://github.com/clojusc/ltest/issues/12))
+* &#x2705; failure and error reporting should include the full namespace +
+  function of where the issue occurred for easier viewing/copying+pasting
+* &#x2705; different status output, sections, etc., should use ANSI terminal
+  colors to assist with quick and easy identification of issues, data, etc.
+* &#x2705; tests should be ordered alphabetically
+* &#x2705; users/developers should have the ability to form arbitrary high-level
   divisions of tests
-  * useful for running unit tests and integration tests together
-  * called "suites" in ltest
+  * &#x2705; useful for running unit tests and integration tests together
+  * &#x2705; called "suites" in ltest
+  * an opinionated default grouping for suites should be offered
+    * &#x2705; by default, group by the top two elements of a namespace (e.g.,
+      `a.b.c.d` and `a.b.e.f` would both be grouped in `a.b`)
+    * developers should have the ability to override this easily (see
+      [ticket #25](https://github.com/clojusc/ltest/issues/25))
 
 
 ## Usage [&#x219F;](#contents)
@@ -87,7 +92,7 @@ The functionality provided by this library my be used in several ways:
   [#10](https://github.com/clojusc/ltest/issues/10))
 
 The first two are discussed below. In both cases, the ltest library is
-utilized solely through it's primary namespace, e.g.:
+utilized solely through its primary namespace, e.g.:
 
 ```clj
 (require '[ltest.core :as ltest])
@@ -250,7 +255,7 @@ Here is a sample runner namespace, intended to be called from the command line:
   []
   (println)
   (println (apply str (repeat 80 "=")))
-  (println "CMR Client Test Runner")
+  (println "Your Project Test Runner")
   (println (apply str (repeat 80 "=")))
   (println))
 
