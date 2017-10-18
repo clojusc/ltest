@@ -1,4 +1,4 @@
-(defproject clojusc/ltest "0.2.0"
+(defproject clojusc/ltest "0.3.0-SNAPSHOT"
   :description "A custom test runner for clojure.test with detailed, coloured output and summaries"
   :url "https://github.com/clojusc/ltest"
   :license {
@@ -12,15 +12,15 @@
     [org.clojure/clojure "1.8.0"]
     [potemkin "0.4.4"]]
   :profiles {
-    :uberjar {
+    :ubercompile {
       :aot :all}
     :dev {
       :dependencies [
         [org.clojure/tools.namespace "0.2.11"]]
       :plugins [
-        [jonase/eastwood "0.2.4"]
+        [jonase/eastwood "0.2.5"]
         [lein-ancient "0.6.12"]
-        [lein-bikeshed "0.4.1"]
+        [lein-bikeshed "0.5.0"]
         [lein-kibit "0.1.5"]
         [lein-shell "0.5.0"]
         [venantius/yagni "0.1.4"]]
@@ -34,8 +34,17 @@
               (println (slurp "resources/text/banner.txt"))
               (println (slurp "resources/text/loading.txt")))}}}
   :aliases {
-    "check-deps" ["ancient" "check" ":all"]
+    "check-deps" ["with-profile" "+test" "ancient" "check" ":all"]
     "kibit" ["do" ["shell" "echo" "== Kibit =="]
                   ["kibit"]]
     "outlaw" ["eastwood" "{:namespaces [:source-paths] :source-paths [\"src\"]}"]
-    "lint" ["do" ["check"] ["kibit"] ["outlaw"]]})
+    "lint" ["do" ["check"] ["kibit"] ["outlaw"]]
+    "ubercompile" ["with-profile" "+ubercompile" "compile"]
+    "build" ["with-profile" "+test" "do"
+      ["check-deps"]
+      ["lint"]
+      ["ubercompile"]
+      ["clean"]
+      ["uberjar"]
+      ["clean"]
+      ["test"]]})
