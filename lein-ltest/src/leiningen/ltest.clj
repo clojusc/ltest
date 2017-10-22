@@ -4,22 +4,22 @@
             [leiningen.test :as test]
             [leiningen.core.project :as project]))
 
-(def eftest-profile
-  {:dependencies '[[eftest "0.3.2"]]})
+(def ltest-profile
+  {:dependencies '[[ltest "0.3.0-SNAPSHOT"]]})
 
 (defn- report-namespace [project]
-  (if-let [reporter (get-in project [:eftest :report])]
+  (if-let [reporter (get-in project [:ltest :report])]
     (try
       (-> reporter namespace symbol)
       (catch NullPointerException cause
-        (throw (ex-info (str "eftest :report must be a fully-qualified reporter "
+        (throw (ex-info (str "ltest :report must be a fully-qualified reporter "
                              "function!")
                         {:reporter reporter}
                         cause))))
-    'eftest.report.progress))
+    'ltest.runner))
 
 (defn- require-form [project]
-  `(require 'eftest.report 'eftest.runner '~(report-namespace project)))
+  `(require 'ltest.runner '~(report-namespace project)))
 
 ;; The following three forms are copied from leiningen.test
 
@@ -74,11 +74,10 @@
   ;; an explicit/accidental `nil`.
   ;;
   ;; Note, that we've duplicated the default reporter decision both here and in
-  ;; `eftest.runner/run-tests`.
-  `(let [reporter# (or ~report eftest.report.progress/report)]
+  ;; `ltest.runner/run-tests`.
+  `(let [reporter# (or ~report ltest.runner/report)]
      (cond-> (or ~options {})
-       (some? ~report-to-file)
-       (update :report eftest.report/report-to-file ~report-to-file))))
+       (some? ~report-to-file))))
 
 (defn- testing-form [project namespaces selectors]
   (let [selectors (vec selectors)
@@ -86,22 +85,22 @@
     `(let [~ns-sym              ~(form-for-select-namespaces namespaces selectors)
            _#                   (when (seq ~ns-sym) (apply require :reload ~ns-sym))
            selected-namespaces# ~(form-for-nses-selectors-match selectors ns-sym)
-           options#             ~(-> project :eftest process-options)
+           options#             ~(-> project :ltest process-options)
            summary#             (~form-for-suppressing-unselected-tests
                                  selected-namespaces# ~selectors
-                                 #(eftest.runner/run-tests
-                                   (eftest.runner/find-tests selected-namespaces#)
+                                 #(ltest.runner/run-tests
+                                   (ltest.util/find-tests selected-namespaces#)
                                    options#))
            exit-code#           (+ (:error summary#) (:fail summary#))]
        (if ~(= :leiningen (:eval-in project))
          exit-code#
          (System/exit exit-code#)))))
 
-(defn eftest
-  "Run the project's tests with Eftest."
+(defn ltest
+  "Run the project's tests with ltest."
   [project & tests]
   (let [[nses selectors] (test/read-args tests project)
-        profiles         [:leiningen/test :test eftest-profile]
+        profiles         [:leiningen/test :test ltest-profile]
         project          (project/merge-profiles project profiles)
         form             (testing-form project nses selectors)]
     (try
