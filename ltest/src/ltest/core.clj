@@ -32,7 +32,7 @@
          (runner/run-test a-test)
          vector
          (reporter/do-reports)))
-  :ok)
+  @reporter/*status*)
 
 (defn run-tests
   [tests]
@@ -41,7 +41,7 @@
          (runner/run-tests tests)
          vector
          (reporter/do-reports)))
-  :ok)
+  @reporter/*status*)
 
 (defn run-all-tests
   ([]
@@ -50,14 +50,14 @@
            (runner/run-all-tests)
            vector
            (reporter/do-reports)))
-    :ok)
+    @reporter/*status*)
   ([re]
     (dorun
       (->> {:report runner/report}
            (runner/run-all-tests re)
            vector
            (reporter/do-reports)))
-    :ok))
+    @reporter/*status*))
 
 (defn run-suite
   [suite]
@@ -65,7 +65,7 @@
     (->> {:report runner/report}
          (runner/run-suite suite)
          (reporter/do-reports)))
-  :ok)
+  @reporter/*status*)
 
 (defn run-suites
   "Run a collection of suites of tests."
@@ -74,7 +74,7 @@
     (->> {:report runner/report}
          (runner/run-suites suites)
          (reporter/do-reports)))
-  :ok)
+  @reporter/*status*)
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Tagged-test-running functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;

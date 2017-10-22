@@ -5,20 +5,28 @@
     [ltest.styles :as styles]
     [ltest.util :as util]))
 
+(def ^:dynamic *status* (atom :ok))
+
 (defn show-summary
   [results]
-  (println)
-  (println util/divider)
-  (println "Results")
-  (println util/divider)
-  (println)
-  (println "Total tests:" (reduce + 0 (map :test results)))
-  (println "Time taken:" (util/nano->millis (reduce + 0 (mapcat :times results))) "ms")
-  (println "Assertion passes:" (reduce + 0 (map :pass results)))
-  (println "Assertion failures:" (reduce + 0 (map :fail results)))
-  (println "Assertion errors:" (reduce + 0 (map :error results)))
-  (println)
-  results)
+  (let [total-failures (reduce + 0 (map :fail results))
+        total-errors (reduce + 0 (map :error results))]
+    (if (pos? total-failures)
+      (reset! *status* :fail)
+      (when (pos? total-errors)
+        (reset! *status* :err)))
+    (println)
+    (println util/divider)
+    (println "Results")
+    (println util/divider)
+    (println)
+    (println "Total tests:" (reduce + 0 (map :test results)))
+    (println "Time taken:" (util/nano->millis (reduce + 0 (mapcat :times results))) "ms")
+    (println "Assertion passes:" (reduce + 0 (map :pass results)))
+    (println "Assertion failures:" total-failures)
+    (println "Assertion errors:" total-errors)
+    (println)
+    results))
 
 (defn show-failure
   [result]
@@ -62,6 +70,7 @@
 (defn show-failures
   [results]
   (when (pos? (reduce + 0 (map :fail results)))
+    (println)
     (println (styles/style *style* :fail-divider util/divider))
     (println (styles/style *style* :fail-header "Failures"))
     (println (styles/style *style* :fail-divider util/divider))
@@ -70,13 +79,13 @@
       (->> results
            (map :failures)
            (remove empty?)
-           (map show-failure-set)))
-    (println))
+           (map show-failure-set))))
   results)
 
 (defn show-errors
   [results]
   (when (pos? (reduce + 0 (map :error results)))
+    (println)
     (println (styles/style *style* :error-divider util/divider))
     (println (styles/style *style* :error-header "Errors"))
     (println (styles/style *style* :error-divider util/divider))
@@ -85,8 +94,7 @@
       (->> results
            (map :errors)
            (remove empty?)
-           (map show-error-set)))
-    (println))
+           (map show-error-set))))
   results)
 
 (defn do-reports
