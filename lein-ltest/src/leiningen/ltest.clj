@@ -1,25 +1,16 @@
 (ns leiningen.ltest
-  (:require [leiningen.core.eval :as eval]
-            [leiningen.core.main :as main]
-            [leiningen.test :as test]
-            [leiningen.core.project :as project]))
+  (:require
+    [bultitude.core :as b]
+    [clojure.java.io :as io]
+    [leiningen.core.eval :as eval]
+    [leiningen.core.main :as main]
+    [leiningen.test :as test]
+    [leiningen.core.project :as project]))
+
+(def ^:dynamic *exit-after-tests* true)
 
 (def ltest-profile
   {:dependencies '[[clojusc/ltest "0.3.0-SNAPSHOT"]]})
-
-(defn- report-namespace [project]
-  (if-let [reporter (get-in project [:ltest :report])]
-    (try
-      (-> reporter namespace symbol)
-      (catch NullPointerException cause
-        (throw (ex-info (str "ltest :report must be a fully-qualified reporter "
-                             "function!")
-                        {:reporter reporter}
-                        cause))))
-    'ltest.runner))
-
-(defn- require-form [project]
-  `(require 'ltest.runner '~(report-namespace project)))
 
 ;; The following three forms are copied from leiningen.test
 
@@ -28,20 +19,20 @@
      (let [copy-meta# (fn [var# from-key# to-key#]
                         (if-let [x# (get (meta var#) from-key#)]
                           (alter-meta! var# #(-> % (assoc to-key# x#) (dissoc from-key#)))))
-           vars#      (if (seq selectors#)
-                        (->> namespaces#
-                             (mapcat (comp vals ns-interns))
-                             (remove (fn [var#]
-                                       (some (fn [[selector# args#]]
-                                               (let [sfn# (if (vector? selector#)
-                                                            (second selector#)
-                                                            selector#)]
-                                                 (apply sfn#
-                                                        (merge (-> var# meta :ns meta)
-                                                               (assoc (meta var#) ::var var#))
-                                                        args#)))
-                                             selectors#)))))
-           copy#      #(doseq [v# vars#] (copy-meta# v# %1 %2))]
+           vars# (if (seq selectors#)
+                   (->> namespaces#
+                        (mapcat (comp vals ns-interns))
+                        (remove (fn [var#]
+                                  (some (fn [[selector# args#]]
+                                          (let [sfn# (if (vector? selector#)
+                                                       (second selector#)
+                                                       selector#)]
+                                            (apply sfn#
+                                                   (merge (-> var# meta :ns meta)
+                                                          (assoc (meta var#) ::var var#))
+                                                   args#)))
+                                        selectors#)))))
+           copy# #(doseq [v# vars#] (copy-meta# v# %1 %2))]
        (copy# :test :leiningen/skipped-test)
        (try (func#)
             (finally
@@ -56,56 +47,113 @@
 
 (defn- form-for-nses-selectors-match [selectors ns-sym]
   `(distinct
-    (for [ns#       ~ns-sym
+    (for [ns# ~ns-sym
           [_# var#] (ns-publics ns#)
-          :when     (some (fn [[selector# args#]]
-                            (apply (if (vector? selector#)
-                                     (second selector#)
-                                     selector#)
-                                   (merge (-> var# meta :ns meta)
-                                          (assoc (meta var#) ::var var#))
-                                   args#))
-                          ~selectors)]
+          :when (some (fn [[selector# args#]]
+
+                        (apply (if (vector? selector#)
+                                 (second selector#)
+                                 selector#)
+                               (merge (-> var# meta :ns meta)
+                                      (assoc (meta var#) ::var var#))
+                               args#))
+                      ~selectors)]
       ns#)))
 
-(defn- process-options
-  [{:keys [report report-to-file] :as options}]
-  ;; Use `or` as opposed to relying on the keyword's IFn to ensure we override
-  ;; an explicit/accidental `nil`.
-  ;;
-  ;; Note, that we've duplicated the default reporter decision both here and in
-  ;; `ltest.runner/run-tests`.
-  `(let [reporter# (or ~report ltest.runner/report)]
-     (cond-> (or ~options {})
-       (some? ~report-to-file))))
+(defn form-for-testing-namespaces
+  "Return a form that when eval'd in the context of the project will test each
+  namespace and print an overall summary."
+  ([namespaces _ & [selectors]]
+     (let [ns-sym (gensym "namespaces")]
+       `(let [~ns-sym ~(form-for-select-namespaces namespaces selectors)]
+          (when (seq ~ns-sym)
+            (apply require :reload ~ns-sym))
+          (let [failures# (atom {})
+                selected-namespaces# ~(form-for-nses-selectors-match selectors ns-sym)
+                _# nil
+                result# (binding [clojure.test/*test-out* *out*]
+                           (~form-for-suppressing-unselected-tests
+                            selected-namespaces# ~selectors
+                            #(ltest.core/run-tests (ltest.util/sort-namespaces selected-namespaces#))))]
+            (if ~*exit-after-tests*
+              (if (= :ok result#)
+                (System/exit 0)
+                (System/exit 127))
+              result#))))))
 
-(defn- testing-form [project namespaces selectors]
-  (let [selectors (vec selectors)
-        ns-sym    (gensym "namespaces")]
-    `(let [~ns-sym              ~(form-for-select-namespaces namespaces selectors)
-           _#                   (when (seq ~ns-sym) (apply require :reload ~ns-sym))
-           selected-namespaces# ~(form-for-nses-selectors-match selectors ns-sym)
-           options#             ~(-> project :ltest process-options)
-           summary#             (~form-for-suppressing-unselected-tests
-                                 selected-namespaces# ~selectors
-                                 #(ltest.runner/run-tests
-                                   (ltest.util/find-tests selected-namespaces#)
-                                   options#))
-           exit-code#           (+ (:error summary#) (:fail summary#))]
-       (if ~(= :leiningen (:eval-in project))
-         exit-code#
-         (System/exit exit-code#)))))
+(defn- split-selectors [args]
+  (let [[nses selectors] (split-with (complement keyword?) args)]
+    [nses
+     (loop [acc {} [selector & selectors] selectors]
+       (if (seq selectors)
+         (let [[args next] (split-with (complement keyword?) selectors)]
+           (recur (assoc acc selector (list 'quote args))
+                  next))
+         (if selector
+           (assoc acc selector ())
+           acc)))]))
+
+(defn- partial-selectors [project-selectors selectors]
+  (for [[k v] selectors
+        :let [selector-form (k project-selectors)]
+        :when selector-form]
+    [selector-form v]))
+
+(def ^:private only-form
+  ['(fn [ns & vars]
+      ((set (for [v vars]
+              (-> (str v)
+                  (.split "/")
+                  (first)
+                  (symbol))))
+       ns))
+   '(fn [m & vars]
+      (some #(let [var (str "#'" %)]
+               (if (some #{\/} var)
+                 (= var (-> m ::var str))
+                 (= % (ns-name (:ns m)))))
+            vars))])
+
+(defn- convert-to-ns [possible-file]
+  (if (and (re-matches #".*\.cljc?" possible-file) (.exists (io/file possible-file)))
+    (str (second (b/ns-form-for-file possible-file)))
+    possible-file))
+
+(defn ^:internal read-args [args project]
+  (let [args (->> args (map convert-to-ns) (map read-string))
+        [nses given-selectors] (split-selectors args)
+        nses (or (seq nses)
+                 (sort (b/namespaces-on-classpath
+                        :classpath (map io/file (distinct (:test-paths project)))
+                        :ignore-unreadable? false)))
+        selectors (partial-selectors (merge {:all '(constantly true)}
+                                            {:only only-form}
+                                            (:test-selectors project))
+                                     given-selectors)
+        selectors (if (and (empty? selectors)
+                           (:default (:test-selectors project)))
+                    [[(:default (:test-selectors project)) ()]]
+                    selectors)]
+    (when (and (empty? selectors)
+               (seq given-selectors))
+      (main/abort "Please specify :test-selectors in project.clj"))
+    [nses selectors]))
 
 (defn ltest
   "Run the project's tests with ltest."
   [project & tests]
-  (let [[nses selectors] (test/read-args tests project)
-        profiles         [:leiningen/test :test ltest-profile]
-        project          (project/merge-profiles project profiles)
-        form             (testing-form project nses selectors)]
-    (try
-      (when-let [n (eval/eval-in-project project form (require-form project))]
-        (when (and (number? n) (pos? n))
-          (throw (ex-info "Tests Failed" {:exit-code n}))))
-      (catch clojure.lang.ExceptionInfo _
-        (main/abort "Tests failed.")))))
+  (binding [main/*exit-process?* (if (= :leiningen (:eval-in project))
+                                   false
+                                   main/*exit-process?*)
+            *exit-after-tests* (if (= :leiningen (:eval-in project))
+                                 false
+                                 *exit-after-tests*)]
+    (let [project (project/merge-profiles project [:leiningen/test :test ltest-profile])
+          [nses selectors] (read-args tests project)
+          _ (eval/prep project)
+          form (form-for-testing-namespaces nses nil (vec selectors))]
+      (try (when-let [n (eval/eval-in-project project form '(require 'ltest.core))]
+             (when (and (number? n) (pos? n))
+               (throw (ex-info "Tests Failed" {:exit-code n}))))
+           (catch clojure.lang.ExceptionInfo e
+             (main/abort "Tests failed."))))))
