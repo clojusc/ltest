@@ -5,7 +5,8 @@
     [clojure.tools.namespace.find :as find]
     [ltest.styles :as styles])
   (:import
-   (clojure.lang Keyword)))
+   (clojure.lang Keyword)
+   (java.util.concurrent TimeUnit)))
 
 (defn bar
   "Create a string of a given length composed of the given character."
@@ -193,3 +194,15 @@
 (defn find-nss-sorted
   [arg]
   (sort-namespaces (find-test-nss arg)))
+
+(defn nano->seconds
+  [nano]
+  (.toSeconds TimeUnit/NANOSECONDS nano))
+
+(defn nano->millis
+  [nano]
+  (.toMillis TimeUnit/NANOSECONDS nano))
+
+(defn nano->micros
+  [nano]
+  (.toMicros TimeUnit/NANOSECONDS nano))
