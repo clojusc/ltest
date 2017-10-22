@@ -17,6 +17,7 @@
 * [About](#about-)
 * [Feature List](#feature-list-)
 * [Usage](#usage-)
+  * [lein Plugin](#lein-plugin-)
   * [Function Calls](#function-calls-)
     * [Running Multiple Tests](#running-multiple-tests-)
     * [Running One Test](#running-one-test-)
@@ -96,6 +97,27 @@ utilized solely through its primary namespace, e.g.:
 
 ```clj
 (require '[ltest.core :as ltest])
+```
+
+### `lein` Plugin [&#x219F;](#contents)
+
+The simplest way to use ltest is with the `lein` plugin. The latest version is
+here:
+
+[![Clojars Project for the lein plugin][clojars-lein-badge]][clojars-lein]
+
+Add this to your project as a `lein` plugin, e.g.:
+
+```
+...
+:plugins [[lein-ltest "x.y.z"]]
+...
+```
+
+And then run your tests with the following:
+
+```bash
+$ lein ltest
 ```
 
 
@@ -354,6 +376,8 @@ Distributed under the Apache License, Version 2.0.
 [jdk-v]: https://img.shields.io/badge/jdk-1.7+-blue.svg
 [clojars]: https://clojars.org/clojusc/ltest
 [clojars-badge]: https://img.shields.io/clojars/v/clojusc/ltest.svg
+[clojars-lein]: https://clojars.org/lein-ltest
+[clojars-lein-badge]: https://img.shields.io/clojars/v/lein-ltest.svg
 
 [screen1-thumb]: resources/images/ns-test-thumb.png
 [screen1]: resources/images/ns-test.png

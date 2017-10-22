@@ -1,6 +1,8 @@
 (ns ltest.util
   (:require
+    [clojure.java.io :as io]
     [clojure.string :as string]
+    [clojure.tools.namespace.find :as find]
     [ltest.styles :as styles])
   (:import
    (clojure.lang Keyword)))
@@ -44,6 +46,63 @@
 (defmethod get-ns :default
   [an-ns]
   an-ns)
+
+(defn- require-namespaces-in-dir [dir]
+  (map (fn [ns] (require ns) (find-ns ns)) (find/find-namespaces-in-dir dir)))
+
+(defn- find-tests-in-namespace [ns]
+  (->> ns ns-interns vals (filter (comp :test meta))))
+
+(defn- find-tests-in-dir [dir]
+  (mapcat find-tests-in-namespace (require-namespaces-in-dir dir)))
+
+(defmulti find-tests
+  "Find test vars specified by a source. The source may be a var, symbol
+  namespace or directory path, or a collection of any of the previous types."
+  {:arglists '([source])}
+  type)
+
+(defmethod find-tests clojure.lang.IPersistentCollection [coll]
+  (mapcat find-tests coll))
+
+(defmethod find-tests clojure.lang.Namespace [ns]
+  (find-tests-in-namespace ns))
+
+(defmethod find-tests clojure.lang.Symbol [sym]
+  (if (namespace sym) (find-tests (find-var sym)) (find-tests-in-namespace sym)))
+
+(defmethod find-tests clojure.lang.Var [var]
+  (if (-> var meta :test) (list var)))
+
+(defmethod find-tests java.io.File [dir]
+  (find-tests-in-dir dir))
+
+(defmethod find-tests java.lang.String [dir]
+  (find-tests-in-dir (io/file dir)))
+
+(defmulti find-test-nss
+  "Find test namespaces specified by a source. The source may be a var, symbol
+  namespace or directory path, or a collection of any of the previous types."
+  {:arglists '([source])}
+  type)
+
+(defmethod find-test-nss clojure.lang.IPersistentCollection [coll]
+  (mapcat find-tests coll))
+
+(defmethod find-test-nss clojure.lang.Namespace [ns]
+  ns)
+
+(defmethod find-test-nss clojure.lang.Symbol [sym]
+  (create-ns sym))
+
+(defmethod find-test-nss clojure.lang.Var [var]
+  (if (-> var meta :test) (list var)))
+
+(defmethod find-test-nss java.io.File [dir]
+  (map (comp :ns meta) (find-tests-in-dir dir)))
+
+(defmethod find-test-nss java.lang.String [dir]
+  (map (comp :ns meta) (find-tests-in-dir (io/file dir))))
 
 (defn default-group-formatter
   ""
@@ -130,3 +189,7 @@
     (tagged-ns tag))
   ([re tag]
     (tagged-ns (filtered-ns re) tag)))
+
+(defn find-nss-sorted
+  [arg]
+  (sort-namespaces (find-test-nss arg)))
