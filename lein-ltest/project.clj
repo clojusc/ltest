@@ -1,4 +1,4 @@
-(defproject clojusc/lein-ltest "0.3.0-SNAPSHOT"
+(defproject lein-ltest "0.3.0-SNAPSHOT"
   :description "The lein plugin for ltest"
   :url "https://github.com/clojusc/ltest"
   :license {
