@@ -236,7 +236,11 @@
     (binding [test/report (:report opts test/report)]
       (let [namespaces (map util/get-ns nss)
             start (System/nanoTime)
-            results (apply merge-with + (map test/test-ns namespaces))
+            res0 {:test 0
+                  :pass 0
+                  :fail 0
+                  :error 0}
+            results (apply merge-with + res0 (map test/test-ns namespaces))
             end (System/nanoTime)]
         (swap! *times* #(conj % (- end start)))
         (-> results

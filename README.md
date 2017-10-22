@@ -85,7 +85,7 @@ developers) are the following:
 
 ## Usage [&#x219F;](#contents)
 
-The functionality provided by this library my be used in several ways:
+The functionality provided by this library may be used in several ways:
 
 * As a tool (set of functions) from a development REPL
 * As a utility library for creating a test runner for your project
