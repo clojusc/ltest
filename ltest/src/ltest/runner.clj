@@ -29,6 +29,7 @@
 (def ^:dynamic *errors* (atom []))
 (def ^:dynamic *failures* (atom []))
 (def ^:dynamic *assertion-count* (atom 0))
+(def ^:dynamic *times* (atom []))
 
 ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
 ;;;   Support/utility functions   ;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
@@ -43,6 +44,7 @@
     (reset! *passed* 0)
     (reset! *errors* [])
     (reset! *failures* [])
+    (reset! *times* [])
     data))
 
 (defn color-status
@@ -208,15 +210,19 @@
     (run-test ns-test-var {}))
   ([ns-test-var opts]
     (binding [test/report (:report opts test/report)]
-      (test/test-vars [ns-test-var])
-      (let [results {:test @*tests*
-                     :pass @*passed*
-                     :failures @*failures*
-                     :errors @*errors*}]
-        (-> results
-            (reset-counters!)
-            (assoc :fail (count (:failures results))
-                   :error (count (:errors results))))))))
+      (let [start (System/nanoTime)
+            _ (test/test-vars [ns-test-var])
+            end (System/nanoTime)]
+        (swap! *times* #(conj % (- end start)))
+        (let [results {:test @*tests*
+                       :pass @*passed*
+                       :failures @*failures*
+                       :errors @*errors*
+                       :times @*times*}]
+          (-> results
+              (reset-counters!)
+              (assoc :fail (count (:failures results))
+                     :error (count (:errors results)))))))))
 
 (defn run-tests
   "Runs all tests in the given namespaces; prints results. Defaults to current
@@ -229,10 +235,14 @@
   ([nss opts]
     (binding [test/report (:report opts test/report)]
       (let [namespaces (map util/get-ns nss)
-            results (apply merge-with + (map test/test-ns namespaces))]
+            start (System/nanoTime)
+            results (apply merge-with + (map test/test-ns namespaces))
+            end (System/nanoTime)]
+        (swap! *times* #(conj % (- end start)))
         (-> results
             (assoc :errors @*errors*
-                   :failures @*failures*)
+                   :failures @*failures*
+                   :times @*times*)
             (reset-counters!))))))
 
 (defn run-all-tests
