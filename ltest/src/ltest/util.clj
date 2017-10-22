@@ -80,6 +80,30 @@
 (defmethod find-tests java.lang.String [dir]
   (find-tests-in-dir (io/file dir)))
 
+(defmulti find-test-nss
+  "Find test namespaces specified by a source. The source may be a var, symbol
+  namespace or directory path, or a collection of any of the previous types."
+  {:arglists '([source])}
+  type)
+
+(defmethod find-test-nss clojure.lang.IPersistentCollection [coll]
+  (mapcat find-tests coll))
+
+(defmethod find-test-nss clojure.lang.Namespace [ns]
+  ns)
+
+(defmethod find-test-nss clojure.lang.Symbol [sym]
+  (create-ns sym))
+
+(defmethod find-test-nss clojure.lang.Var [var]
+  (if (-> var meta :test) (list var)))
+
+(defmethod find-test-nss java.io.File [dir]
+  (map (comp :ns meta) (find-tests-in-dir dir)))
+
+(defmethod find-test-nss java.lang.String [dir]
+  (map (comp :ns meta) (find-tests-in-dir (io/file dir))))
+
 (defn default-group-formatter
   ""
   [group]
@@ -165,3 +189,7 @@
     (tagged-ns tag))
   ([re tag]
     (tagged-ns (filtered-ns re) tag)))
+
+(defn find-nss-sorted
+  [arg]
+  (sort-namespaces (find-test-nss arg)))
