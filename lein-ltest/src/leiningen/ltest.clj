@@ -5,7 +5,7 @@
             [leiningen.core.project :as project]))
 
 (def ltest-profile
-  {:dependencies '[[ltest "0.3.0-SNAPSHOT"]]})
+  {:dependencies '[[clojusc/ltest "0.3.0-SNAPSHOT"]]})
 
 (defn- report-namespace [project]
   (if-let [reporter (get-in project [:ltest :report])]
