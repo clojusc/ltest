@@ -10,13 +10,12 @@
     [clansi "1.0.0"]
     [io.aviso/pretty "0.1.34"]
     [org.clojure/clojure "1.8.0"]
+    [org.clojure/tools.namespace "0.2.11"]
     [potemkin "0.4.4"]]
   :profiles {
     :ubercompile {
       :aot :all}
     :dev {
-      :dependencies [
-        [org.clojure/tools.namespace "0.2.11"]]
       :plugins [
         [jonase/eastwood "0.2.5"]
         [lein-ancient "0.6.14"]
