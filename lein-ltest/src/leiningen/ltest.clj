@@ -1,4 +1,4 @@
-(ns leiningen.eftest
+(ns leiningen.ltest
   (:require [leiningen.core.eval :as eval]
             [leiningen.core.main :as main]
             [leiningen.test :as test]
