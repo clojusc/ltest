@@ -1,6 +1,6 @@
 language: clojure
 script:
-  - lein build
+  - cd ltest && lein build
 jdk:
   - oraclejdk8
   - oraclejdk7
