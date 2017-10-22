@@ -13,6 +13,7 @@
   (println util/divider)
   (println)
   (println "Total tests:" (reduce + 0 (map :test results)))
+  (println "Time taken:" (util/nano->millis (reduce + 0 (mapcat :times results))) "ms")
   (println "Assertion passes:" (reduce + 0 (map :pass results)))
   (println "Assertion failures:" (reduce + 0 (map :fail results)))
   (println "Assertion errors:" (reduce + 0 (map :error results)))
