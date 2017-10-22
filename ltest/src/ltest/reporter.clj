@@ -93,6 +93,6 @@
   [results]
   (dorun
     (-> results
-        (show-summary)
         (show-failures)
-        (show-errors))))
+        (show-errors)
+        (show-summary))))
