@@ -206,3 +206,12 @@
 (defn nano->micros
   [nano]
   (.toMicros TimeUnit/NANOSECONDS nano))
+
+(defn nano->human-readable
+  [nano]
+  (let [len (count (str nano))]
+    (cond
+          (< len 4) (str nano "ns")
+          (< len 7) (str (nano->micros nano) "μs")
+          (< len 10) (str (nano->millis nano) "ms")
+          :else (str (nano->seconds nano) "s"))))

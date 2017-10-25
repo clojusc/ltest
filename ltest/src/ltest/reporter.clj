@@ -10,7 +10,8 @@
 (defn show-summary
   [results]
   (let [total-failures (reduce + 0 (map :fail results))
-        total-errors (reduce + 0 (map :error results))]
+        total-errors (reduce + 0 (map :error results))
+        time-taken (util/nano->human-readable (reduce + 0 (mapcat :times results)))]
     (if (pos? total-failures)
       (reset! *status* :fail)
       (when (pos? total-errors)
@@ -21,7 +22,7 @@
     (println util/divider)
     (println)
     (println "Total tests:" (reduce + 0 (map :test results)))
-    (println "Time taken:" (util/nano->millis (reduce + 0 (mapcat :times results))) "ms")
+    (println "Time taken:" time-taken)
     (println "Assertion passes:" (reduce + 0 (map :pass results)))
     (println "Assertion failures:" total-failures)
     (println "Assertion errors:" total-errors)
