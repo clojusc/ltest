@@ -209,9 +209,7 @@
 
 (defn nano->human-readable
   [nano]
-  (let [len (count (str nano))]
-    (cond
-          (< len 4) (str nano "ns")
-          (< len 7) (str (nano->micros nano) "μs")
-          (< len 10) (str (nano->millis nano) "ms")
-          :else (str (nano->seconds nano) "s"))))
+  (cond (>= (/ nano 1e9) 1) (str (nano->seconds nano) "s")
+        (>= (/ nano 1e6) 1) (str (nano->millis  nano) "ms")
+        (>= (/ nano 1e3) 1) (str (nano->micros  nano) "μs")
+        :else               (str                nano  "ns")))
