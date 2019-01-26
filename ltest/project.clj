@@ -8,21 +8,19 @@
     [org.clojure/clojure]]
   :dependencies [
     [clansi "1.0.0"]
-    [io.aviso/pretty "0.1.34"]
-    [org.clojure/clojure "1.8.0"]
+    [io.aviso/pretty "0.1.36"]
+    [org.clojure/clojure "1.10.0"]
     [org.clojure/tools.namespace "0.2.11"]
-    [potemkin "0.4.4"]]
+    [potemkin "0.4.5"]]
   :profiles {
     :ubercompile {
       :aot :all}
     :dev {
       :plugins [
-        [jonase/eastwood "0.2.5"]
-        [lein-ancient "0.6.14"]
-        [lein-bikeshed "0.5.0"]
-        [lein-kibit "0.1.5"]
-        [lein-shell "0.5.0"]
-        [venantius/yagni "0.1.4"]]
+        [jonase/eastwood "0.3.4"]
+        [lein-ancient "0.6.15"]
+        [lein-kibit "0.1.6"]
+        [lein-shell "0.5.0"]]
       :source-paths [
         "dev-resources/src"
         "resources/sample-tests/src"]
@@ -33,12 +31,17 @@
               (println (slurp "resources/text/banner.txt"))
               (println (slurp "resources/text/loading.txt")))}}}
   :aliases {
-    "check-deps" ["with-profile" "+test" "ancient" "check" ":all"]
-    "kibit" ["do" ["shell" "echo" "== Kibit =="]
-                  ["kibit"]]
-    "outlaw" ["eastwood" "{:namespaces [:source-paths] :source-paths [\"src\"]}"]
-    "lint" ["do" ["check"] ["kibit"] ["outlaw"]]
     "ubercompile" ["with-profile" "+ubercompile" "compile"]
+    "check-vers" ["with-profile" "+test" "ancient" "check" ":all"]
+    "check-jars" ["with-profile" "+test" "do"
+      ["deps" ":tree"]
+      ["deps" ":plugin-tree"]]
+    "check-deps" ["do"
+      ["check-jars"]
+      ["check-vers"]]
+    "kibit" ["with-profile" "+lint" "kibit"]
+    "eastwood" ["with-profile" "+lint" "eastwood" "{:namespaces [:source-paths]}"]
+    "lint" ["do" ["check"] ["kibit"] ["eastwood"]]
     "build" ["with-profile" "+test" "do"
       ["check-deps"]
       ["lint"]
