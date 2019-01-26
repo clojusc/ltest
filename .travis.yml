@@ -6,8 +6,7 @@ script:
   - lein build
 jdk:
   - oraclejdk8
-  - oraclejdk7
-  - openjdk7
+  - oraclejdk11
 notifications:
   email:
     - oubiwann@gmail.com
