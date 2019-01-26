@@ -15,15 +15,18 @@
   :profiles {
     :ubercompile {
       :aot :all}
-    :dev {
+    :lint {
       :plugins [
         [jonase/eastwood "0.3.4"]
-        [lein-ancient "0.6.15"]
-        [lein-kibit "0.1.6"]
-        [lein-shell "0.5.0"]]
+        [lein-kibit "0.1.6"]]}
+    :test {
+      :plugins [
+        [lein-ancient "0.6.15"]]
       :source-paths [
-        "dev-resources/src"
-        "resources/sample-tests/src"]
+        "resources/sample-tests/src"]}
+    :dev {
+      :source-paths [
+        "dev-resources/src"]
       :repl-options {
         :init-ns ltest.dev
         :welcome
@@ -44,7 +47,7 @@
     "lint" ["do" ["check"] ["kibit"] ["eastwood"]]
     "build" ["with-profile" "+test" "do"
       ["check-deps"]
-      ["lint"]
+      ["kibit"]
       ["ubercompile"]
       ["clean"]
       ["uberjar"]
