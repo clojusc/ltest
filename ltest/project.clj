@@ -32,7 +32,8 @@
         :welcome
           ~(do
               (println (slurp "resources/text/banner.txt"))
-              (println (slurp "resources/text/loading.txt")))}}}
+              ; (println (slurp "resources/text/loading.txt"))
+              )}}}
   :aliases {
     "ubercompile" ["with-profile" "+ubercompile" "compile"]
     "check-vers" ["with-profile" "+test" "ancient" "check" ":all"]
