@@ -8,7 +8,7 @@
     [org.clojure/clojure]]
   :dependencies [
     [clansi "1.0.0"]
-    [io.aviso/pretty "0.1.36"]
+    [io.aviso/pretty "0.1.37"]
     [org.clojure/clojure "1.10.0"]
     [org.clojure/tools.namespace "0.2.11"]
     [potemkin "0.4.5"]]
@@ -17,7 +17,7 @@
       :aot :all}
     :lint {
       :plugins [
-        [jonase/eastwood "0.3.4"]
+        [jonase/eastwood "0.3.5"]
         [lein-kibit "0.1.6"]]}
     :test {
       :plugins [
