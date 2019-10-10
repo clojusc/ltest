@@ -9,16 +9,16 @@
   :dependencies [
     [clansi "1.0.0"]
     [io.aviso/pretty "0.1.37"]
-    [org.clojure/clojure "1.10.0"]
-    [org.clojure/tools.namespace "0.2.11"]
+    [org.clojure/clojure "1.10.1"]
+    [org.clojure/tools.namespace "0.3.1"]
     [potemkin "0.4.5"]]
   :profiles {
     :ubercompile {
       :aot :all}
     :lint {
       :plugins [
-        [jonase/eastwood "0.3.5"]
-        [lein-kibit "0.1.6"]]}
+        [jonase/eastwood "0.3.6"]
+        [lein-kibit "0.1.7"]]}
     :test {
       :plugins [
         [lein-ancient "0.6.15"]]
