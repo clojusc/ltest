@@ -21,7 +21,8 @@
         [lein-kibit "0.1.7"]]}
     :test {
       :plugins [
-        [lein-ancient "0.6.15"]]
+        [lein-ancient "0.6.15"]
+        [lein-ltest "0.4.0-SNAPSHOT"]]
       :source-paths [
         "resources/sample-tests/src"]}
     :dev {
@@ -46,6 +47,7 @@
     "kibit" ["with-profile" "+lint" "kibit"]
     "eastwood" ["with-profile" "+lint" "eastwood" "{:namespaces [:source-paths]}"]
     "lint" ["do" ["check"] ["kibit"] ["eastwood"]]
+    "ltest" ["with-profile" "+test" "ltest"]
     "build" ["with-profile" "+test" "do"
       ["check-deps"]
       ["kibit"]
