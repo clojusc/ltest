@@ -7,6 +7,7 @@
 (def assertion-indent (string/join (repeat 6 " ")))
 
 (def max-len 80)
+(def max-len-assertion-str 26)
 (def min-elide 3)
 (def elide-space 2)
 (def status-brackets 2)
