@@ -68,6 +68,18 @@
                           (string/join (repeat elide-count ".")))
             (color-status status))))
 
+(defn contexts-str
+  []
+  (let [ctx-str (test/testing-contexts-str)
+        len-ctx-str (count ctx-str)
+        max-len const/max-len-assertion-str
+        len (if (< len-ctx-str max-len) len-ctx-str max-len)
+        ctx-abbr (subs ctx-str 0 len)
+        ellip (if (< len len-ctx-str) " ..." "")]
+    (if (empty? ctx-abbr)
+      ""
+      (format " (%s%s)" ctx-abbr ellip))))
+
 (defn line-format
   "Sadly, padded string support in `format` isn't quite as flexible as we
   would like, thus this function. This might be possible to do more elgantly
@@ -75,11 +87,7 @@
   ([prefix idx status]
    (line-format prefix idx "" status))
   ([prefix idx postfix status]
-   (let [ctx-str (test/testing-contexts-str)
-         line (format "%s assertion %s%s"
-                      prefix
-                      idx
-                      (if (empty? ctx-str) "" (str " (" ctx-str ")")))
+   (let [line (format "%s assertion %s%s" prefix idx (contexts-str))
          len (+ (count line)
                 (count postfix)
                 const/elide-space
