@@ -1,4 +1,4 @@
-(defproject clojusc/ltest "0.4.0-SNAPSHOT"
+(defproject clojusc/ltest "0.4.0"
   :description "A custom test runner for clojure.test with detailed, coloured output and summaries"
   :url "https://github.com/clojusc/ltest"
   :license {
@@ -21,12 +21,12 @@
         [lein-kibit "0.1.7"]]}
     :ltest-examples {
       :plugins [
-        [lein-ltest "0.4.0-SNAPSHOT"]]
+        [lein-ltest "0.4.0"]]
       :test-paths ["test" "resources/sample-tests/src"]}
     :test {
       :plugins [
         [lein-ancient "0.6.15"]
-        [lein-ltest "0.4.0-SNAPSHOT"]]
+        [lein-ltest "0.4.0"]]
       :source-paths [
         "resources/sample-tests/src"]}
     :dev {
