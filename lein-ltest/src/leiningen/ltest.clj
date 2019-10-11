@@ -10,7 +10,7 @@
 (def ^:dynamic *exit-after-tests* true)
 
 (def ltest-profile
-  {:dependencies '[[clojusc/ltest "0.4.0"]]})
+  {:dependencies '[[clojusc/ltest "0.5.0-SNAPSHOT"]]})
 
 ;; The following three forms are copied from leiningen.test
 
