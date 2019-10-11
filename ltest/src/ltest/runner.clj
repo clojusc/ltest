@@ -75,7 +75,11 @@
   ([prefix idx status]
    (line-format prefix idx "" status))
   ([prefix idx postfix status]
-   (let [line (format "%s assertion %s" prefix idx)
+   (let [ctx-str (test/testing-contexts-str)
+         line (format "%s assertion %s%s"
+                      prefix
+                      idx
+                      (if (empty? ctx-str) "" (str " (" ctx-str ")")))
          len (+ (count line)
                 (count postfix)
                 const/elide-space
