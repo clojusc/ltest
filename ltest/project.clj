@@ -19,6 +19,10 @@
       :plugins [
         [jonase/eastwood "0.3.6"]
         [lein-kibit "0.1.7"]]}
+    :ltest-examples {
+      :plugins [
+        [lein-ltest "0.4.0-SNAPSHOT"]]
+      :test-paths ["test" "resources/sample-tests/src"]}
     :test {
       :plugins [
         [lein-ancient "0.6.15"]
@@ -47,6 +51,7 @@
     "kibit" ["with-profile" "+lint" "kibit"]
     "eastwood" ["with-profile" "+lint" "eastwood" "{:namespaces [:source-paths]}"]
     "lint" ["do" ["check"] ["kibit"] ["eastwood"]]
+    "ltest-examples" ["with-profile" "+ltest-examples" "ltest"]
     "ltest" ["with-profile" "+test" "ltest"]
     "build" ["with-profile" "+test" "do"
       ["check-deps"]
